@@ -1,0 +1,37 @@
+// Definición de colores
+$primary-color: #6a0dad;
+$secondary-color: #ffffff;
+$accent-color: #007bff;
+
+ion-header {
+  ion-toolbar {
+    background-color: $primary-color;
+
+    ion-title {
+      color: $secondary-color;
+    }
+
+    ion-buttons {
+      ion-button {
+        ion-icon {
+          color: $secondary-color; 
+          font-size: 24px; 
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.2); 
+        }
+      }
+    }
+  }
+}
+
+.content-container {
+  padding: 20px;
+  text-align: center; 
+
+  p {
+    font-size: 18px;
+    color: $primary-color;
+  }
+}

@@ -1,0 +1,57 @@
+#container {
+  text-align: center;
+  position: relative; /* Necesario para posicionar el icono en relación con este contenedor */
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#icon-button {
+
+  top: 10px; /* Ajusta según sea necesario */
+  left: 10px; /* Ajusta según sea necesario */
+
+  --background: transparent; /* Fondo transparente para el botón */
+}
+
+ion-icon {
+  font-size: 50px;
+  color: #ffffff;
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.footer-icons ion-button {
+  margin: 0 35px; /* Aumenta la separación horizontal entre los iconos */
+}
+
+.footer-icons i {
+  font-size: 40px; /* Tamaño de los iconos */
+  color: #ffffff; /* Color de los iconos */
+}
