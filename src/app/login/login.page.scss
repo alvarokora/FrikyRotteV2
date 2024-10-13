@@ -1,14 +1,18 @@
 .login-content{
- /* --background: url('assets/bg.png') no repeat center center/cover;
-  background-image: url(assets/bg.png);*/
+/*  --background: url('assets/bg.png') no repeat center center/cover;*/
+/*  background-image: url('/assets/bg.png') !important;*/
+/*  background-color: lightblue;*/
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .login-card{
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.6);
   padding: 20px;
   border-radius: 20px;
   width: 100%;
