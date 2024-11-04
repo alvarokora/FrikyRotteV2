@@ -8,7 +8,6 @@ import { SessionManager } from 'src/managers/SessionManager';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
   email: string = '';
   password: string = '';
 
@@ -16,14 +15,18 @@ export class LoginPage implements OnInit {
 
   ngOnInit() { }
 
-  onLoginButtonPressed() {
-    if (this.sessionManager.performLogin(this.email, this.password)) {
+  async onLoginButtonPressed() {
+    // Asegúrate de que este método sea async
+    const isLoggedIn = await this.sessionManager.performLogin(this.email, this.password); // Usa await aquí
+    
+    if (isLoggedIn) {
       // Navega a la vista de Home y pasa el parámetro email
       this.router.navigate(['/home'], { queryParams: { email: this.email } });
     } else {
+      // Reinicia las credenciales en caso de fallo
       this.email = '';
       this.password = '';
-      alert('Las credenciales ingresadas son inválidas.');
+      alert('Las credenciales ingresadas son inválidas o ya hay una sesión activa.');
     }
   }
 
