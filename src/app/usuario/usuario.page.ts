@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { SessionManager } from 'src/managers/SessionManager';
 
 @Component({
   selector: 'app-usuario',
@@ -10,7 +11,7 @@ import { NavController } from '@ionic/angular';
 export class UsuarioPage implements OnInit {
   email: string = ''; // Aquí almacenamos el correo recibido
 
-  constructor(private route: ActivatedRoute, private navCtrl: NavController) { }
+  constructor(private route: ActivatedRoute, private navCtrl: NavController, private sessionManager: SessionManager) { }
 
   ngOnInit() {
     // Obtiene el parámetro 'email' de los queryParams
@@ -20,7 +21,12 @@ export class UsuarioPage implements OnInit {
     });
   }
 
-  goBack(){
+  goBack() {
     this.navCtrl.back();
+  }
+
+  async onLogoutButtonPressed() {
+    await this.sessionManager.performLogout(); // Cierra la sesión
+    this.navCtrl.navigateRoot('/login'); // Navega a la página de login
   }
 }
