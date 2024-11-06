@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
         'Login exitoso',
         'Has iniciado sesion correctamente.',
         () => {
-          this.router.navigate(['/splash']);
+          this.router.navigate(['/home']);
         }
       );
     } else {
