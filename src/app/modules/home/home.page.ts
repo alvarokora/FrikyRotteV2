@@ -1,15 +1,28 @@
 import { Component, OnInit } from '@angular/core';
+import { StorageService } from 'src/managers/StorageService';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CancelAlertService } from 'src/managers/CancelAlertService';
+import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
-  email: string = ''; // Aquí almacenamos el correo recibido
 
-  constructor(private route: ActivatedRoute, private router: Router ) { }
+export class HomePage implements OnInit {
+
+  user: any;
+
+  constructor(
+    private router: Router,
+    private storageService: StorageService,
+    private cancelAlertService: CancelAlertService,
+    private logoutUseCase: UserLogoutUseCase,
+    private route: ActivatedRoute
+  ) {}
+
+  email: string = "";
 
   ngOnInit() {
     // Obtiene el parámetro 'email' de los queryParams
@@ -19,13 +32,19 @@ export class HomePage implements OnInit {
     });
   }
 
-  async onIconButtonClick() {
-    // Redirige al usuario a la página de usuario y pasa el parámetro email
-    this.router.navigate(['/usuario'], { queryParams: { email: this.email } });
-   //this.cancelAlertService.showAlert()
+  async ionViewDidEnter() {
+    this.user = await this.storageService.get('user');
+    if (!this.user) {
+      console.log('No se encontraron datos del usuario.');
+    }
   }
 
-  onIconHomeButtonClick(){
+  onIconButtonClick() {
+    this.router.navigate(['/usuario'], { queryParams: { email: this.email } });
+  }
+
+  onIconHomeButtonClick() {
     this.router.navigate(['/detalle']);
   }
+
 }

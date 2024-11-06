@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
-import { SessionManager } from 'src/managers/SessionManager';
+import { StorageService } from 'src/managers/StorageService';
+import { CancelAlertService } from 'src/managers/CancelAlertService';
+import { NavController} from '@ionic/angular';
+import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuario',
@@ -9,16 +11,20 @@ import { SessionManager } from 'src/managers/SessionManager';
   styleUrls: ['./usuario.page.scss'],
 })
 export class UsuarioPage implements OnInit {
+
   email: string = ''; // Aquí almacenamos el correo recibido
 
-  constructor(private route: ActivatedRoute, private navCtrl: NavController, private sessionManager: SessionManager) { }
+  constructor(private storageService: StorageService,
+    private router: Router,
+    private alert: CancelAlertService,
+    private navCtrl: NavController,
+    private userLogoutUseCase: UserLogoutUseCase) { }
 
-  ngOnInit() {
-    // Obtiene el parámetro 'email' de los queryParams
-    this.route.queryParams.subscribe(params => {
-      this.email = params['email'] || ''; // Guarda el correo
-      console.log('Email received in Usuario:', this.email); // Verifica que el correo se está recibiendo
-    });
+  async ngOnInit() {
+    const user = await this.storageService.get('user');
+    if (user) {
+      this.email = user.email && user.email.trim() !== '' ? user.email : 'Correo no disponible';
+    }
   }
 
   goBack() {
@@ -26,6 +32,23 @@ export class UsuarioPage implements OnInit {
   }
 
   async onLogoutButtonPressed() {
-    this.navCtrl.navigateRoot('/login'); // Navega a la página de login
+    const result = await this.userLogoutUseCase.performLogout();
+    if (result.success){
+      this.alert.showAlert(
+        'Sesion cerrada',
+        'La sesion a sido cerrada de manera correcta.',
+        () =>{
+          this.navCtrl.navigateRoot('/splash');
+        }
+      )
+    } else {
+      this.alert.showAlert(
+        'Error',
+        result.message,
+        () =>{
+          // Depende
+        }
+      );
+    }
   }
 }
