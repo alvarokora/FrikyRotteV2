@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { SessionManager } from 'src/managers/SessionManager';
+import { StorageService } from 'src/managers/StorageService';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SessionGuard implements CanActivate {
-  constructor(private sessionManager: SessionManager, private router: Router) {}
+
+  constructor(private router: Router, private storageService: StorageService) {}
 
   async canActivate(): Promise<boolean> {
-    const isLoggedIn = await this.sessionManager.isLoggedIn();
-    if (isLoggedIn) {
-      return true; // Permitir el acceso
+    const session = await this.storageService.get('isSessionActive');
+
+    if (session) {
+      return true; 
     } else {
-      this.router.navigate(['/login']); // Redirigir a login si no está autenticado
-      return false; // Bloquear el acceso
+      this.router.navigate(['/login']);  
+      return false;  
     }
   }
 }

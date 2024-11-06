@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class HomePage implements OnInit {
   email: string = ''; // Aquí almacenamos el correo recibido
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router ) { }
 
   ngOnInit() {
     // Obtiene el parámetro 'email' de los queryParams
@@ -19,9 +19,10 @@ export class HomePage implements OnInit {
     });
   }
 
-  onIconButtonClick() {
+  async onIconButtonClick() {
     // Redirige al usuario a la página de usuario y pasa el parámetro email
     this.router.navigate(['/usuario'], { queryParams: { email: this.email } });
+   //this.cancelAlertService.showAlert()
   }
 
   onIconHomeButtonClick(){

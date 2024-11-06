@@ -26,7 +26,6 @@ export class UsuarioPage implements OnInit {
   }
 
   async onLogoutButtonPressed() {
-    await this.sessionManager.performLogout(); // Cierra la sesión
     this.navCtrl.navigateRoot('/login'); // Navega a la página de login
   }
 }

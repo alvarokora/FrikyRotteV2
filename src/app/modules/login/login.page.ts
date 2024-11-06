@@ -16,7 +16,19 @@ export class LoginPage implements OnInit {
   ngOnInit() { }
 
   async onLoginButtonPressed() {
-    // Asegúrate de que este método sea async
+
+    try{
+      const userCredential = await this.sessionManager.loginWith(this.email, this.password)
+      const user = userCredential.user
+      if (user) {
+        console.log('Usuario autenticado: ',user);
+      }
+    } catch (error){
+      console.error('Error al iniciar sesion: ',error);
+      alert('Error')
+    }
+  }
+   /* // Asegúrate de que este método sea async
     const isLoggedIn = await this.sessionManager.performLogin(this.email, this.password); // Usa await aquí
     
     if (isLoggedIn) {
@@ -28,7 +40,7 @@ export class LoginPage implements OnInit {
       this.password = '';
       alert('Las credenciales ingresadas son inválidas o ya hay una sesión activa.');
     }
-  }
+  }*/
 
   onRegisterButtonPressed() {
     this.router.navigate(['/register']);
