@@ -34,11 +34,12 @@ export class UsuarioPage implements OnInit {
   async onLogoutButtonPressed() {
     const result = await this.userLogoutUseCase.performLogout();
     if (result.success){
+      await this.storageService.set('isSessionActive', false);
       this.alert.showAlert(
         'Sesion cerrada',
         'La sesion a sido cerrada de manera correcta.',
         () =>{
-          this.navCtrl.navigateRoot('/splash');
+          this.navCtrl.navigateRoot('/login');
         }
       )
     } else {

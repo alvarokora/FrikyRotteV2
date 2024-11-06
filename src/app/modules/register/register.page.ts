@@ -30,7 +30,7 @@ export class RegisterPage {
         'Registro exitoso',
         'Ya eres parte de nuestro sistema',
         () => {
-          this.router.navigate(['/splash']);
+          this.router.navigate(['/login']);
         }
       );
     } else {
