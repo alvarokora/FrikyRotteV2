@@ -9,9 +9,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Pagina en proceso...</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div *ngIf="data; else loading">
+    <ion-list>
+      <ion-item *ngFor="let item of data">
+        <ion-label>{{ item.nombre }}</ion-label>  <!-- Cambia "nombre" a la propiedad correcta de tu API -->
+      </ion-item>
+    </ion-list>
+  </div>
+  <ng-template #loading>
+    <ion-spinner name="dots"></ion-spinner>
+    <p>Cargando datos...</p>
+  </ng-template>
 </ion-content>
