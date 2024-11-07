@@ -11,7 +11,6 @@ export class SessionGuard implements CanActivate {
 
   async canActivate(): Promise<boolean> {
     const session = await this.storageService.get('isSessionActive');
-
     if (session) {
       return true; 
     } else {

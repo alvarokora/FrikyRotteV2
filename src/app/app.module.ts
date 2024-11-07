@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
-
+import { SessionGuard } from './session.guard';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +24,7 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireStorageModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient()],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient(),SessionGuard],
   bootstrap: [AppComponent],
 })
 
