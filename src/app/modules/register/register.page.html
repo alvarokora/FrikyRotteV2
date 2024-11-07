@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+  </ion-header>
+
+  <div class="content-container">
+    <img src="assets/RatiMag.webp" alt="logo" class="logo">
+    <div class="input-container">
+
+
+      <h1>
+        Welcome to FrikyRotte
+      </h1>
+
+      <ion-item>
+        <ion-label position="floating">Email/Username</ion-label>
+        <ion-input type="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" class="login-button" (click)="onRegisterButtonPressed()">Sign up</ion-button>
+
+      <ion-text>
+        <p class="ion-text-center">Do you have an account? <a routerLink="/login">Login</a></p>
+      </ion-text>
+
+    </div>
+  </div>
+
+</ion-content>

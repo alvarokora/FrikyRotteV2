@@ -1,0 +1,63 @@
+.content-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/bg.png'); /* Imagen de fondo */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex; /* Habilitar flexbox para el centro */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+}
+  
+.input-container {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9); /* Fondo blanco con algo de transparencia */
+  padding: 20px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  margin-top: 30%;
+  z-index: 2;
+  border: 2px solid white; /* Borde blanco para el login card */
+  filter: brightness(80%); /* Aplica un filtro oscuro solo a la card */
+}
+  
+ion-item {
+  --background: transparent;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.login-button {
+  --background: #800080;
+  color: white;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+ion-text p {
+  color: black; /* Asegura que el texto en la etiqueta p sea blanco */
+  font-size: 14px; /* Tamaño de fuente ajustable */
+  margin-top: 10px; /* Espacio superior para separar el texto */
+}
+
+h1 {
+  color: #800080; /* Color de texto morado */
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  /* Si quieres que la imagen esté centrada en el divMayor y no se desplace con el login card */
+  position: absolute; /* La posición absoluta la coloca sobre el fondo */
+  top: 10%; /* Ajusta la distancia desde la parte superior si es necesario */
+  left: 50%;
+  transform: translateX(-50%); /* Asegura que la imagen esté centrada horizontalmente */
+}

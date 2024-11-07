@@ -37,7 +37,7 @@ export class StorageService {
         await this._storage.clear();
     }
 
-    private async initIfNeeded(): Promise<void> {
+    public async initIfNeeded(): Promise<void> {
         if (!this._storage) {
             await this.init(); // Solo inicializa si no está
         }
