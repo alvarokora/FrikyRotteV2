@@ -11,5 +11,10 @@
 <ion-content [fullscreen]="true">
   <div class="content-container">
     <p>Bienvenido, {{ email }}</p>
+    
+    <!-- Botón de Cierre de Sesión -->
+    <ion-button expand="full" color="danger" (click)="onLogoutButtonPressed()">
+      Cerrar Sesión
+    </ion-button>
   </div>
 </ion-content>
