@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
 
-  private apiUrl = 'https://rapidapi.com/Prastiwar/api/metacriticapi/playground/apiendpoint_d6e98069-2166-4891-979d-742742e2ddaa';
+  private apiUrl = 'httpsapi.rottentomatoes.com/api/public/v1.0/movie_alias.json?id=<>&type=<>  ';
 
   constructor(private http: HttpClient) {}
 

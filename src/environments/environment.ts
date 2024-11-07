@@ -12,6 +12,10 @@ export const environment = {
     messagingSenderId: "653590668033",
     appId: "1:653590668033:web:04601d040ef191a4e6b100",
     measurementId: "G-6Y74XB6HY4"
+  },
+  apiBaseUrl: 'httpsapi.rottentomatoes.com/api/public/v1.0',
+  apiEndpoints: {
+    movie_alias: '/movie_alias.json?id=<>&type=<>'
   }
 };
 
