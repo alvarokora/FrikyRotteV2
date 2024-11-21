@@ -1,27 +1,11 @@
 <ion-content>
-  <!-- Mostrar mensaje de error si hay problemas al obtener reseñas -->
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
 
-  <!-- Mostrar las reseñas si están disponibles -->
-  <div *ngIf="movieReviews.length > 0">
-    <ion-card *ngFor="let review of movieReviews">
-      <ion-card-header>
-        <ion-card-title>{{ review.title }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>Reseña:</strong> {{ review.review }}</p>
-        <p><strong>Fecha de publicación:</strong> {{ review.date }}</p>
-        <p><strong>Puntaje:</strong> {{ review.score }}</p>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
-  <!-- Si no hay reseñas disponibles -->
-  <div *ngIf="movieReviews.length === 0" class="no-reviews">
-    No se encontraron reseñas para mostrar.
-  </div>
+  <ion-card *ngFor="let movie of movieReviews">
+    <ion-card-header>
+      <ion-card-title>{{movie.title}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>{{movie.overview}}</ion-card-content>
+  </ion-card>
 
   <!-- Botón para regresar -->
   <ion-button (click)="goBack()">Regresar</ion-button>

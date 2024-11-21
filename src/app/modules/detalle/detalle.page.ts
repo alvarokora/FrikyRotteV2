@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { NavController } from '@ionic/angular';
-import { movieAPI } from 'src/managers/movieAPI';
+import { MoviesService } from 'src/services/movies.service';
 
 @Component({
   selector: 'app-detalle',
@@ -10,25 +10,12 @@ import { movieAPI } from 'src/managers/movieAPI';
 })
 export class DetallePage implements OnInit {
 
-  movieReviews: any[] = [];  // Para guardar las reseñas de las películas
-  errorMessage: string = '';  // Para mostrar mensajes de error en caso de fallo
-  apiKey: string = 'YOUR_API_KEY';  // Reemplaza con tu clave de API de Rotten Tomatoes
+  movieReviews = [];  // Para guardar las reseñas de las películas
 
-  constructor(private http: HttpClient, private navCtrl: NavController, private movieApi: movieAPI) { }
+  constructor(private http: HttpClient, private navCtrl: NavController, private movieService: MoviesService) { }
 
   async ngOnInit() {
-    this.loadMovies()
-  }
-
-  loadMovies(){
-    this.movieApi.getAlias().subscribe(
-      (Response) => {
-        console.log('Peliculas obtenidas: ',Response);
-      },
-      (Error) => {
-        console.error('Error al obtener peliculas: ',Error);
-      }
-    );
+    this.movieService.getPopularMovies().subscribe(data => this.movieReviews=data);
   }
 
   goBack() {
