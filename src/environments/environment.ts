@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebaseConfig: {
+  firebase: {
     apiKey: "AIzaSyDPEsc6ozT78v5iHGVcU92uewzrBf85WhU",
     authDomain: "frikyrottev2.firebaseapp.com",
     projectId: "frikyrottev2",
@@ -12,6 +12,10 @@ export const environment = {
     messagingSenderId: "653590668033",
     appId: "1:653590668033:web:04601d040ef191a4e6b100",
     measurementId: "G-6Y74XB6HY4"
+  },
+  tmdb: {
+    apiKey: '7193c40a0550f4af72011ea24f8b7777',
+    baseUrl: 'https://api.themoviedb.org/3'
   }
 };
 

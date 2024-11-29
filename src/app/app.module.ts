@@ -21,11 +21,11 @@ import { SessionGuard } from './session.guard';
     AppRoutingModule,
     IonicStorageModule.forRoot(),
     AngularFireAuthModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireModule.initializeApp(environment.firebase),  // Cambié 'firebaseConfig' por 'firebase'
     AngularFireDatabaseModule,
-    AngularFireStorageModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient(),SessionGuard],
+    AngularFireStorageModule
+  ],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient(), SessionGuard],
   bootstrap: [AppComponent],
 })
-
 export class AppModule {}

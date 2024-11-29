@@ -1,0 +1,22 @@
+.rating-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .rating-container ion-label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .rating-container ion-icon {
+    margin-right: 5px;
+  }
+  
+  .rating-container span {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+  
