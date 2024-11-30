@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TmdbManager } from '../../../managers/tmdb.manager';
+import { RawgManager } from '../../../managers/rawg.manager'; // Importar el RawgManager
 import { MovieDetail } from 'src/app/model/MovieModel';
 
 @Component({
@@ -9,74 +10,100 @@ import { MovieDetail } from 'src/app/model/MovieModel';
   styleUrls: ['./detalle.page.scss'],
 })
 export class DetallePage implements OnInit {
-  movieId: number;  // Para almacenar el ID de la película seleccionada
-  movieDetail: MovieDetail | null = null;  // Para almacenar los detalles de la película
-  movies: any[] = [];  // Para almacenar la lista de películas
+  movieDetail: MovieDetail | any = null; // Puede ser detalle de película o juego
+  movies: any[] = [];  // Lista de películas
+  games: any[] = [];   // Lista de juegos
+  type: string = '';   // Tipo de contenido: movie o game
 
   constructor(
-    private activatedRoute: ActivatedRoute,  // Para obtener parámetros de la URL
-    private tmdbManager: TmdbManager,  // El servicio que maneja las solicitudes a TMDb
-    private router: Router  // Para manejar la navegación
+    private activatedRoute: ActivatedRoute,
+    private tmdbManager: TmdbManager,
+    private rawgManager: RawgManager, // Inyección del RawgManager
+    private router: Router
   ) {}
 
   ngOnInit() {
-    // Obtener el ID de la película desde la URL cuando el componente se inicializa
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.movieId = +params.get('id');  // Obtener el ID de la URL
-      if (this.movieId) {
-        this.getMovieDetail();  // Llamar a la función que obtiene los detalles de la película si el ID es válido
+    // Obtener el tipo y el ID desde los parámetros
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.type = params['type'];
+      if (this.type === 'movie') {
+        this.getPopularMovies(); // Películas populares
+      } else if (this.type === 'game') {
+        this.getPopularGames(); // Juegos populares
       }
     });
-
-    this.getPopularMovies();  // Obtener las películas populares al cargar el componente
   }
 
   // Obtener la lista de películas populares
   getPopularMovies() {
     this.tmdbManager.getPopularMovies().subscribe(
       (data: any) => {
-        this.movies = data.results;  // Asignar las películas obtenidas a la variable
+        this.movies = data.results;
       },
       (error) => {
-        console.error('Error fetching movies:', error);  // Manejar cualquier error
+        console.error('Error fetching movies:', error);
       }
     );
   }
 
-  // Obtener los detalles de la película seleccionada
-  getMovieDetail() {
-    this.tmdbManager.getMovieDetail(this.movieId).subscribe(
-      (data: MovieDetail) => {
-        this.movieDetail = data;  // Asignar los detalles de la película a la variable movieDetail
+  // Obtener la lista de juegos populares
+  getPopularGames() {
+    this.rawgManager.getPopularGames().subscribe(
+      (data: any) => {
+        this.games = data.results;
       },
       (error) => {
-        console.error('Error fetching movie details:', error);  // Manejar cualquier error
+        console.error('Error fetching games:', error);
       }
     );
   }
 
-  // Cambiar la película seleccionada
-  selectMovie(id: number) {
-    this.router.navigate(['/detalle', id]);  // Navegar a la página de detalle pasando el nuevo id
-  }
-  getStarsArray() {
-    const fullStars = Math.floor(this.movieDetail?.vote_average / 2);  // Redondea para obtener el número de estrellas llenas
-    return new Array(fullStars).fill(0);  // Crea un array con el número de estrellas completas
-  }
-   // Función para obtener el número de estrellas llenas
-   getStars(voteAverage: number): number[] {
-    const filledStars = Math.round(voteAverage / 2);  // Convertir a 5 estrellas
-    return new Array(filledStars).fill(0);  // Devolver un array con las estrellas llenas
+  // Navegar a detalle de película o juego
+  selectDetail(id: number) {
+    const routeType = this.type === 'movie' ? 'movie' : 'game';
+    this.router.navigate(['/detalle'], { queryParams: { id, type: routeType } });
   }
 
-  // Función para obtener el número de estrellas vacías
+  // Método para obtener las estrellas llenas y medias (valoración de 0 a 5)
+  getStars(voteAverage: number): number[] {
+    let totalStars: number;
+  
+    // Si es una película, dividimos entre 2 (valoración de 0-10 a 0-5)
+    if (this.type === 'movie') {
+      totalStars = voteAverage / 2;
+    } else {
+      totalStars = voteAverage;  // Si es un juego, usamos la valoración directa (0-5)
+    }
+  
+    const fullStars = Math.floor(totalStars); // Estrellas completas
+    const halfStars = (totalStars - fullStars) >= 0.5 ? 1 : 0; // Si hay más de 0.5, se agrega media estrella
+  
+    // Llenar el array con estrellas completas y medias
+    const starsArray = new Array(fullStars).fill(0);  // Estrellas completas
+    if (halfStars) {
+      starsArray.push(0.5);  // Añadir media estrella
+    }
+  
+    return starsArray; // Retorna un array con las estrellas llenas y medias
+  }
+  
+  // Método para obtener las estrellas vacías
   getEmptyStars(voteAverage: number): number[] {
-    const filledStars = Math.round(voteAverage / 2);  // Convertir a 5 estrellas
-    const emptyStars = 5 - filledStars;  // Calcular cuántas estrellas vacías deben haber
-    return new Array(emptyStars).fill(0);  // Devolver un array con las estrellas vacías
+    let totalStars: number;
+  
+    // Si es una película, dividimos entre 2 (valoración de 0-10 a 0-5)
+    if (this.type === 'movie') {
+      totalStars = voteAverage / 2;
+    } else {
+      totalStars = voteAverage;  // Si es un juego, usamos la valoración directa (0-5)
+    }
+  
+    const fullStars = Math.floor(totalStars); // Estrellas completas
+    const halfStars = (totalStars - fullStars) >= 0.5 ? 1 : 0; // Si hay más de 0.5, se agrega media estrella
+  
+    // Calcular cuántas estrellas vacías faltan
+    const emptyStars = 5 - fullStars - halfStars;  // Las vacías son las que faltan para completar 5 estrellas
+    return new Array(emptyStars).fill(0);  // Retorna un array con las estrellas vacías
   }
-  goBack() {
-    // Regresar a la página anterior
-    window.history.back();
-  }
+
 }

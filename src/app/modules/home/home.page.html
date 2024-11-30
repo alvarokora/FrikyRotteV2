@@ -5,21 +5,25 @@
         <ion-icon name="person-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>
-    </ion-title>
+    <ion-title>Inicio</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Contenido aquí -->
+  <!-- Contenido principal -->
 </ion-content>
 
-<ion-segment value="heart">
-  <ion-segment-button value="call" (click)="onIconHomeButtonClick()">
-    <ion-icon name="call"></ion-icon>
+<ion-segment value="movies-games">
+  <!-- Botón para redirigir a detalle de películas -->
+  <ion-segment-button value="movies" (click)="navigateToDetail('movie')">
+    <ion-icon name="film-outline"></ion-icon>
+    <ion-label>Películas</ion-label>
   </ion-segment-button>
-  <ion-segment-button value="heart">
-    <ion-icon name="heart"></ion-icon>
+
+  <!-- Botón para redirigir a detalle de juegos -->
+  <ion-segment-button value="games" (click)="navigateToDetail('game')">
+    <ion-icon name="game-controller-outline"></ion-icon>
+    <ion-label>Juegos</ion-label>
   </ion-segment-button>
   <ion-segment-button value="pin">
     <ion-icon name="pin"></ion-icon>

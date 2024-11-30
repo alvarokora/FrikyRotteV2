@@ -1,47 +1,57 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
+    <!-- Botón de regreso a la pestaña anterior -->
     <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="goBack()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </ion-button>
+      <ion-back-button defaultHref="/"></ion-back-button> <!-- Redirige a la página raíz si no hay historial -->
     </ion-buttons>
-    <ion-title>Película Detalle</ion-title>
+    <ion-title>Detalle</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Mostrar las películas populares -->
-  <ion-list>
-    <ion-item *ngFor="let movie of movies" (click)="selectMovie(movie.id)">
+  <!-- Lista de películas populares -->
+  <ion-list *ngIf="type === 'movie'">
+    <ion-item *ngFor="let movie of movies" (click)="selectDetail(movie.id)">
       <ion-thumbnail slot="start">
-        <img [src]="'https://image.tmdb.org/t/p/w92/' + movie.poster_path" alt="Poster de la película" />
+        <img [src]="'https://image.tmdb.org/t/p/w92/' + movie.poster_path" />
       </ion-thumbnail>
       <ion-label>
         <h2>{{ movie.title }}</h2>
         <p>{{ movie.release_date | date }}</p>
+        
         <!-- Mostrar la valoración en estrellas -->
         <div class="stars">
-          <ion-icon *ngFor="let star of getStars(movie.vote_average)" name="star" color="gold"></ion-icon>
-          <ion-icon *ngFor="let star of getEmptyStars(movie.vote_average)" name="star-outline" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(movie.vote_average)" 
+                    [name]="star === 0.5 ? 'star-half' : 'star'" color="gold">
+          </ion-icon>
+          <ion-icon *ngFor="let star of getEmptyStars(movie.vote_average)" 
+                    name="star-outline" color="gold">
+          </ion-icon>
         </div>
       </ion-label>
     </ion-item>
   </ion-list>
 
-  <!-- Mostrar detalles de la película seleccionada -->
-  <ion-card *ngIf="movieDetail">
-    <img [src]="'https://image.tmdb.org/t/p/w500/' + movieDetail?.poster_path" />
-    <ion-card-title>{{ movieDetail?.title }}</ion-card-title>
-    <ion-card-subtitle>{{ movieDetail?.release_date | date }}</ion-card-subtitle>
-    <p>{{ movieDetail?.overview }}</p>
-
-    <!-- Mostrar la valoración en estrellas -->
-    <ion-item>
-      <ion-label>Valoración:</ion-label>
-      <div class="stars">
-        <ion-icon *ngFor="let star of getStars(movieDetail?.vote_average)" name="star" color="gold"></ion-icon>
-        <ion-icon *ngFor="let star of getEmptyStars(movieDetail?.vote_average)" name="star-outline" color="gold"></ion-icon>
-      </div>
+  <!-- Lista de juegos populares -->
+  <ion-list *ngIf="type === 'game'">
+    <ion-item *ngFor="let game of games" (click)="selectDetail(game.id)">
+      <ion-thumbnail slot="start">
+        <img [src]="game.background_image" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ game.name }}</h2>
+        <p>{{ game.released | date }}</p>
+        
+        <!-- Mostrar la valoración en estrellas -->
+        <div class="stars">
+          <ion-icon *ngFor="let star of getStars(game.rating)" 
+                    [name]="star === 0.5 ? 'star-half' : 'star'" color="gold">
+          </ion-icon>
+          <ion-icon *ngFor="let star of getEmptyStars(game.rating)" 
+                    name="star-outline" color="gold">
+          </ion-icon>
+        </div>
+      </ion-label>
     </ion-item>
-  </ion-card>
+  </ion-list>
 </ion-content>

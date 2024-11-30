@@ -16,6 +16,10 @@ export const environment = {
   tmdb: {
     apiKey: '7193c40a0550f4af72011ea24f8b7777',
     baseUrl: 'https://api.themoviedb.org/3'
+  },
+  rawg: {
+    apiKey: 'afe4a0d2f86a492d9598ebe0590fa6ba',
+    baseUrl: 'https://api.rawg.io/api',
   }
 };
 

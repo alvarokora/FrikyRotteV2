@@ -9,10 +9,9 @@ import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-
 export class HomePage implements OnInit {
-
   user: any;
+  email: string = "";
 
   constructor(
     private router: Router,
@@ -21,8 +20,6 @@ export class HomePage implements OnInit {
     private logoutUseCase: UserLogoutUseCase,
     private route: ActivatedRoute
   ) {}
-
-  email: string = "";
 
   ngOnInit() {
     // Obtiene el parámetro 'email' de los queryParams
@@ -43,8 +40,8 @@ export class HomePage implements OnInit {
     this.router.navigate(['/usuario'], { queryParams: { email: this.email } });
   }
 
-  onIconHomeButtonClick() {
-    this.router.navigate(['/detalle']);
+  // Método que redirige a la página de detalles
+  navigateToDetail(type: string) {
+    this.router.navigate(['/detalle'], { queryParams: { type } });
   }
-
 }
