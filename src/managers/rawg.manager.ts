@@ -20,6 +20,8 @@ export class RawgManager {
     const url = `${this.baseUrl}/games?key=${this.apiKey}&page=${page}`;
     return this.http.get(url);
   }
+  
+  
 
   /**
    * Obtiene los detalles de un juego específico.

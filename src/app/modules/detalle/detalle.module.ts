@@ -13,6 +13,7 @@ import { DetallePage } from './detalle.page';
     CommonModule,
     FormsModule,
     IonicModule,
+    
     DetallePageRoutingModule
   ],
   declarations: [DetallePage]

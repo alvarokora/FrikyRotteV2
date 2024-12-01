@@ -1,14 +1,14 @@
-<ion-header>
-  <ion-toolbar>
-    <!-- Botón de regreso a la pestaña anterior -->
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button> <!-- Redirige a la página raíz si no hay historial -->
-    </ion-buttons>
-    <ion-title>Detalle</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button fill="clear" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
   <!-- Lista de películas populares -->
   <ion-list *ngIf="type === 'movie'">
     <ion-item *ngFor="let movie of movies" (click)="selectDetail(movie.id)">
@@ -18,18 +18,17 @@
       <ion-label>
         <h2>{{ movie.title }}</h2>
         <p>{{ movie.release_date | date }}</p>
-        
-        <!-- Mostrar la valoración en estrellas -->
         <div class="stars">
-          <ion-icon *ngFor="let star of getStars(movie.vote_average)" 
-                    [name]="star === 0.5 ? 'star-half' : 'star'" color="gold">
-          </ion-icon>
-          <ion-icon *ngFor="let star of getEmptyStars(movie.vote_average)" 
-                    name="star-outline" color="gold">
-          </ion-icon>
+          <ion-icon *ngFor="let star of getStars(movie.vote_average).full" name="star" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(movie.vote_average).half" name="star-half" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(movie.vote_average).empty" name="star-outline" color="gold"></ion-icon>
         </div>
       </ion-label>
     </ion-item>
+    <ion-infinite-scroll *ngIf="hasMoreMovies" (ionInfinite)="loadMoreMovies($event)" threshold="100px">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-button *ngIf="!hasMoreMovies" expand="full" (click)="loadMoreMovies($event)">Cargar más</ion-button>
   </ion-list>
 
   <!-- Lista de juegos populares -->
@@ -41,17 +40,37 @@
       <ion-label>
         <h2>{{ game.name }}</h2>
         <p>{{ game.released | date }}</p>
-        
-        <!-- Mostrar la valoración en estrellas -->
         <div class="stars">
-          <ion-icon *ngFor="let star of getStars(game.rating)" 
-                    [name]="star === 0.5 ? 'star-half' : 'star'" color="gold">
-          </ion-icon>
-          <ion-icon *ngFor="let star of getEmptyStars(game.rating)" 
-                    name="star-outline" color="gold">
-          </ion-icon>
+          <ion-icon *ngFor="let star of getStars(game.rating).full" name="star" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(game.rating).half" name="star-half" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(game.rating).empty" name="star-outline" color="gold"></ion-icon>
         </div>
       </ion-label>
     </ion-item>
+    <ion-infinite-scroll *ngIf="hasMoreGames" (ionInfinite)="loadMoreGames($event)" threshold="100px">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-button *ngIf="!hasMoreGames" expand="full" (click)="loadMoreGames($event)">Cargar más</ion-button>
+  </ion-list>
+
+  <!-- Lista de animes populares -->
+  <ion-list *ngIf="type === 'anime'">
+    <ion-item *ngFor="let anime of animes" (click)="selectDetail(anime.mal_id)">
+      <ion-thumbnail slot="start">
+        <img [src]="anime.images.jpg.image_url" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ anime.title }}</h2>
+        <div class="stars">
+          <ion-icon *ngFor="let star of getStars(anime.score).full" name="star" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(anime.score).half" name="star-half" color="gold"></ion-icon>
+          <ion-icon *ngFor="let star of getStars(anime.score).empty" name="star-outline" color="gold"></ion-icon>
+        </div>
+      </ion-label>
+    </ion-item>
+    <ion-infinite-scroll *ngIf="hasMoreAnimes" (ionInfinite)="loadMoreAnimes($event)" threshold="100px">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-button *ngIf="!hasMoreAnimes" expand="full" (click)="loadMoreAnimes($event)">Cargar más</ion-button>
   </ion-list>
 </ion-content>
