@@ -5,6 +5,8 @@ import { RawgManager } from '../../../managers/rawg.manager'; // Importar el Raw
 import { MovieDetail } from 'src/app/model/MovieModel';
 import { JikanManager } from '../../../managers/jikanManager';
 import { NavController} from '@ionic/angular';
+
+
 @Component({
   selector: 'app-detalle',
   templateUrl: './detalle.page.html',
@@ -15,19 +17,21 @@ export class DetallePage implements OnInit {
   movies: any[] = [];  // Lista de películas
   games: any[] = [];   // Lista de juegos
   animes: any[] = [];  // Lista de animes
-  hasMoreAnimes: boolean = false;
+  hasMoreAnimes: boolean = true;
   hasMoreMovies: boolean = true;   // Para películas
   hasMoreGames: boolean = true;    // Para juegos
-  type: string = '';   // Tipo de contenido: movie o game
-  currentPage: number = 1; // Página actual para los animes
-
+  type: string = '';   // Tipo de contenido: peli - ju - ani
+  currentPage: number = 1; // Página actual 
+  searchTerm: string = '';
+  filteredResults: any[] = [];
+  
   constructor(
     private navCtrl: NavController,
     private activatedRoute: ActivatedRoute,
     private tmdbManager: TmdbManager,
     private rawgManager: RawgManager, // Inyección del RawgManager
     private jikanManager: JikanManager, // Inyección del nuevo manager
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -43,37 +47,43 @@ export class DetallePage implements OnInit {
     });
   }
 
+  
   getPopularAnimes() {
     this.jikanManager.getPopularAnimes(this.currentPage).subscribe(
       (data: any) => {
-        this.animes = data.data.slice(0, 3); // Load first 3 animes
+        this.animes = data.data;  // Obtener todos los animes, no limitar a 3
       },
       (error) => {
         console.error('Error fetching animes:', error);
       }
     );
   }
+  
 
-  loadMoreAnimes(event?: any) {
+  loadMoreAnimes(event: any) {
     this.currentPage++;
     this.jikanManager.getPopularAnimes(this.currentPage).subscribe(
       (data: any) => {
-        console.log('Datos de anime:', data); // Verificar los datos obtenidos
         if (data.data && data.data.length > 0) {
-          this.animes = [...this.animes, ...data.data.slice(0, 3)];
+          this.animes = [...this.animes, ...data.data];  // Añadir todos los animes
           this.hasMoreAnimes = true;
         } else {
           this.hasMoreAnimes = false;
         }
-  
-        if (event) event.target.complete(); // Completar el evento de scroll
+    
+        if (event && event.target) {
+          event.target.complete(); // Completar el evento correctamente
+        }
       },
       (error) => {
         console.error('Error fetching animes:', error);
-        if (event) event.target.complete(); // Completar el evento de scroll incluso si hay error
+        if (event && event.target) {
+          event.target.complete(); // Completar el evento incluso si hay error
+        }
       }
     );
   }
+  
   
 
   // Obtener la lista de películas populares
@@ -140,24 +150,38 @@ export class DetallePage implements OnInit {
   // Método para obtener las estrellas llenas y medias (valoración de 0 a 5)
   getStars(voteAverage: number): { full: number[], half: number[], empty: number[] } {
     let totalStars: number;
-
-    // Convertir la valoración al rango de 0-5
-    if (this.type === 'movie') {
-      totalStars = voteAverage / 2; // Si es película, pasamos de 0-10 a 0-5
-    } else if (this.type === 'game' || this.type === 'anime') {
-      totalStars = voteAverage; // Si es un juego o anime, ya está en rango 0-5
+  
+    // Para anime, ajustamos la valoración de 0-10 a 0-5
+    if (this.type === 'game') {
+      totalStars = voteAverage ;  // Si es anime, ajustamos de 0-10 a 0-5
+    } else {
+      // Para películas y juegos, mantenemos el rango 0-5
+      totalStars = voteAverage / 2;
     }
-
-    const fullStars = Math.floor(totalStars); // Estrellas completas
-    const hasHalfStar = (totalStars - fullStars) >= 0.5; // Determinar si hay media estrella
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Estrellas vacías
-
+  
+    const fullStars = Math.floor(totalStars);  // Estrellas completas
+    const hasHalfStar = (totalStars - fullStars) >= 0.5;  // Media estrella si aplica
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);  // Estrellas vacías
+  
     return {
-      full: new Array(fullStars).fill(0), // Array con estrellas completas
-      half: hasHalfStar ? [0.5] : [], // Media estrella si aplica
-      empty: new Array(emptyStars).fill(0), // Estrellas vacías
+      full: new Array(fullStars).fill(0),  // Estrellas completas
+      half: hasHalfStar ? [0.5] : [],  // Media estrella si aplica
+      empty: new Array(emptyStars).fill(0),  // Estrellas vacías
     };
   }
+  
+
+  
+  getItemById(id: number) {
+    if (this.type === 'movie') {
+      return this.movies.find(movie => movie.id === id);
+    } else if (this.type === 'game') {
+      return this.games.find(game => game.id === id);
+    } else {
+      return this.animes.find(anime => anime.mal_id === id);
+    }
+  }
+
   goBack() {
     this.navCtrl.back();
   }

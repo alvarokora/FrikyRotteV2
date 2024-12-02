@@ -54,23 +54,26 @@
   </ion-list>
 
   <!-- Lista de animes populares -->
-  <ion-list *ngIf="type === 'anime'">
-    <ion-item *ngFor="let anime of animes" (click)="selectDetail(anime.mal_id)">
-      <ion-thumbnail slot="start">
-        <img [src]="anime.images.jpg.image_url" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ anime.title }}</h2>
-        <div class="stars">
-          <ion-icon *ngFor="let star of getStars(anime.score).full" name="star" color="gold"></ion-icon>
-          <ion-icon *ngFor="let star of getStars(anime.score).half" name="star-half" color="gold"></ion-icon>
-          <ion-icon *ngFor="let star of getStars(anime.score).empty" name="star-outline" color="gold"></ion-icon>
-        </div>
-      </ion-label>
-    </ion-item>
-    <ion-infinite-scroll *ngIf="hasMoreAnimes" (ionInfinite)="loadMoreAnimes($event)" threshold="100px">
-      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-    <ion-button *ngIf="!hasMoreAnimes" expand="full" (click)="loadMoreAnimes($event)">Cargar más</ion-button>
-  </ion-list>
+  <!-- Lista de animes populares -->
+<ion-list *ngIf="type === 'anime'">
+  <ion-item *ngFor="let anime of animes" (click)="selectDetail(anime.mal_id)">
+    <ion-thumbnail slot="start">
+      <img [src]="anime.images.jpg.image_url" />
+    </ion-thumbnail>
+    <ion-label>
+      <h2>{{ anime.title }}</h2>
+      <p>{{ anime.aired?.from | date }}</p>  <!-- Fecha de estreno -->
+      <div class="stars">
+        <ion-icon *ngFor="let star of getStars(anime.score).full" name="star" color="gold"></ion-icon>
+        <ion-icon *ngFor="let star of getStars(anime.score).half" name="star-half" color="gold"></ion-icon>
+        <ion-icon *ngFor="let star of getStars(anime.score).empty" name="star-outline" color="gold"></ion-icon>
+      </div>
+    </ion-label>
+  </ion-item>
+  <ion-infinite-scroll *ngIf="hasMoreAnimes" (ionInfinite)="loadMoreAnimes($event)" threshold="100px">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-button *ngIf="!hasMoreAnimes" expand="full" (click)="loadMoreAnimes($event)">Cargar más</ion-button>
+</ion-list>
+
 </ion-content>
