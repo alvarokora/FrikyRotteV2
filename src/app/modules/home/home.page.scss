@@ -56,3 +56,12 @@ ion-icon {
   font-size: 40px; /* Tamaño de los iconos */
   color: #ffffff; /* Color de los iconos */
 }
+.fixed-bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.content {
+  padding-bottom: 56px; /* Ajusta esto según el tamaño del toolbar o botones */
+}

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TmdbManager } from '../../../managers/tmdb.manager';
-import { RawgManager } from '../../../managers/rawg.manager'; // Importar el RawgManager
+import { RawgManager } from '../../../managers/rawg.manager'; 
 import { MovieDetail } from 'src/app/model/MovieModel';
 import { JikanManager } from '../../../managers/jikanManager';
-import { NavController} from '@ionic/angular';
-
+import { NavController } from '@ionic/angular';
+import { FavoritesService } from '../../../managers/favoriteService';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-detalle',
@@ -13,26 +14,67 @@ import { NavController} from '@ionic/angular';
   styleUrls: ['./detalle.page.scss'],
 })
 export class DetallePage implements OnInit {
-  movieDetail: MovieDetail | any = null; // Puede ser detalle de película o juego
-  movies: any[] = [];  // Lista de películas
-  games: any[] = [];   // Lista de juegos
-  animes: any[] = [];  // Lista de animes
+  movieDetail: MovieDetail | any = null;
+  movies: any[] = [];
+  games: any[] = [];
+  animes: any[] = [];
   hasMoreAnimes: boolean = true;
-  hasMoreMovies: boolean = true;   // Para películas
-  hasMoreGames: boolean = true;    // Para juegos
-  type: string = '';   // Tipo de contenido: peli - ju - ani
-  currentPage: number = 1; // Página actual 
+  hasMoreMovies: boolean = true;
+  hasMoreGames: boolean = true;
+  type: string = '';
+  currentPage: number = 1;
   searchTerm: string = '';
   filteredResults: any[] = [];
-  
+  isEndOfList: boolean = false;
+
   constructor(
     private navCtrl: NavController,
     private activatedRoute: ActivatedRoute,
     private tmdbManager: TmdbManager,
-    private rawgManager: RawgManager, // Inyección del RawgManager
-    private jikanManager: JikanManager, // Inyección del nuevo manager
+    private rawgManager: RawgManager,
+    private jikanManager: JikanManager,
     private router: Router,
+    private favoritesService: FavoritesService,
+    private toastController: ToastController
   ) {}
+
+  async addToFavorites(item: any, event: Event) {
+    event.stopPropagation(); // Evita la propagación del evento de clic
+    try {
+      const existingFavorite = await this.favoritesService.getFavorites();
+      const isAlreadyFavorite = existingFavorite.some(fav => fav.id === item.id && fav.type === item.type);
+      
+      if (isAlreadyFavorite) {
+        const toast = await this.toastController.create({
+          message: 'Este favorito ya está agregado.',
+          duration: 2000,
+          color: 'warning',
+        });
+        await toast.present();
+        return; // Si ya está agregado, no hacer nada
+      }
+      
+      await this.favoritesService.addFavorite(item);
+      const toast = await this.toastController.create({
+        message: 'Añadido a favoritos',
+        duration: 2000,
+        color: 'success',
+      });
+      await toast.present();
+    } catch (error) {
+      const toast = await this.toastController.create({
+        message: 'Error al añadir a favoritos',
+        duration: 2000,
+        color: 'danger',
+      });
+      await toast.present();
+    }
+  }
+
+  isFavorite(item: any): boolean {
+    const favorites = this.favoritesService.getFavorites();
+    return favorites.some(fav => fav.id === item.id && fav.type === item.type);
+  }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -42,51 +84,81 @@ export class DetallePage implements OnInit {
       } else if (this.type === 'game') {
         this.getPopularGames();
       } else if (this.type === 'anime') {
-        this.getPopularAnimes(); // Obtener animes
+        this.getPopularAnimes();
       }
     });
   }
 
-  
-  getPopularAnimes() {
-    this.jikanManager.getPopularAnimes(this.currentPage).subscribe(
+  loadMoreData(event: any) {
+    if (this.type === 'movie') {
+      this.loadMoreMovies(event);
+    } else if (this.type === 'game') {
+      this.loadMoreGames(event);
+    } else if (this.type === 'anime') {
+      this.loadMoreAnimes(event);
+    }
+  }
+
+  loadMoreMovies(event: any) {
+    this.currentPage++;
+    this.tmdbManager.getPopularMovies(this.currentPage).subscribe(
       (data: any) => {
-        this.animes = data.data;  // Obtener todos los animes, no limitar a 3
+        if (data.results.length > 0) {
+          this.movies = [...this.movies, ...data.results];
+          event.target.complete();
+          this.isEndOfList = false;
+        } else {
+          event.target.disabled = true;
+          this.isEndOfList = true;
+        }
       },
       (error) => {
-        console.error('Error fetching animes:', error);
+        console.error('Error fetching movies:', error);
+        event.target.complete();
       }
     );
   }
-  
+
+  loadMoreGames(event: any) {
+    this.currentPage++;
+    this.rawgManager.getPopularGames(this.currentPage).subscribe(
+      (data: any) => {
+        if (data.results.length > 0) {
+          this.games = [...this.games, ...data.results];
+          event.target.complete();
+          this.isEndOfList = false;
+        } else {
+          event.target.disabled = true;
+          this.isEndOfList = true;
+        }
+      },
+      (error) => {
+        console.error('Error fetching games:', error);
+        event.target.complete();
+      }
+    );
+  }
 
   loadMoreAnimes(event: any) {
     this.currentPage++;
     this.jikanManager.getPopularAnimes(this.currentPage).subscribe(
       (data: any) => {
-        if (data.data && data.data.length > 0) {
-          this.animes = [...this.animes, ...data.data];  // Añadir todos los animes
-          this.hasMoreAnimes = true;
+        if (data.data.length > 0) {
+          this.animes = [...this.animes, ...data.data];
+          event.target.complete();
+          this.isEndOfList = false;
         } else {
-          this.hasMoreAnimes = false;
-        }
-    
-        if (event && event.target) {
-          event.target.complete(); // Completar el evento correctamente
+          event.target.disabled = true;
+          this.isEndOfList = true;
         }
       },
       (error) => {
         console.error('Error fetching animes:', error);
-        if (event && event.target) {
-          event.target.complete(); // Completar el evento incluso si hay error
-        }
+        event.target.complete();
       }
     );
   }
-  
-  
 
-  // Obtener la lista de películas populares
   getPopularMovies() {
     this.tmdbManager.getPopularMovies().subscribe(
       (data: any) => {
@@ -98,36 +170,6 @@ export class DetallePage implements OnInit {
     );
   }
 
-  // Cargar más películas
-  loadMoreMovies(event: any) {
-    this.currentPage++; // Incrementa la página actual
-    this.tmdbManager.getPopularMovies(this.currentPage).subscribe(
-      (data: any) => {
-        this.movies = [...this.movies, ...data.results]; // Concatenamos las nuevas películas
-        event.target.complete(); // Completar evento de scroll
-      },
-      (error) => {
-        console.error('Error fetching movies:', error);
-        event.target.complete(); // Completar evento de scroll incluso si hay error
-      }
-    );
-  }
-
-  loadMoreGames(event: any) {
-    this.currentPage++; // Incrementa la página actual
-    this.rawgManager.getPopularGames(this.currentPage).subscribe(
-      (data: any) => {
-        this.games = [...this.games, ...data.results]; // Concatenamos los nuevos juegos
-        event.target.complete(); // Completar evento de scroll
-      },
-      (error) => {
-        console.error('Error fetching games:', error);
-        event.target.complete(); // Completar evento de scroll incluso si hay error
-      }
-    );
-  }
-
-  // Obtener la lista de juegos populares
   getPopularGames() {
     this.rawgManager.getPopularGames().subscribe(
       (data: any) => {
@@ -139,46 +181,83 @@ export class DetallePage implements OnInit {
     );
   }
 
-  // Navegar a detalle de película o juego
-  selectDetail(id: number) {
-    console.log('Seleccionando detalle con id:', id); // Verificar el id seleccionado
+  getPopularAnimes() {
+    this.jikanManager.getPopularAnimes(this.currentPage).subscribe(
+      (data: any) => {
+        this.animes = data.data;
+      },
+      (error) => {
+        console.error('Error fetching animes:', error);
+      }
+    );
+  }
+
+  selectDetail(id: number, item: any, event: Event) {
+    event.stopPropagation(); // Evita la propagación del evento de clic
     const routeType = this.type === 'movie' ? 'movie' : this.type === 'game' ? 'game' : 'anime';
     this.router.navigate(['/detalle'], { queryParams: { id, type: routeType } });
+    this.addToFavorites(item, event); // Agregar a favoritos
   }
-  
 
-  // Método para obtener las estrellas llenas y medias (valoración de 0 a 5)
   getStars(voteAverage: number): { full: number[], half: number[], empty: number[] } {
-    let totalStars: number;
-  
-    // Para anime, ajustamos la valoración de 0-10 a 0-5
-    if (this.type === 'game') {
-      totalStars = voteAverage ;  // Si es anime, ajustamos de 0-10 a 0-5
+    let totalStars = 0;
+    if (typeof voteAverage === 'number' && !isNaN(voteAverage) && voteAverage > 0) {
+      if (this.type === 'game') {
+        totalStars = voteAverage;
+      } else if (this.type === 'movie') {
+        totalStars = voteAverage / 2;
+      } else if (this.type === 'anime') {
+        totalStars = voteAverage / 2;
+      }
     } else {
-      // Para películas y juegos, mantenemos el rango 0-5
-      totalStars = voteAverage / 2;
+      totalStars = 0;
     }
-  
-    const fullStars = Math.floor(totalStars);  // Estrellas completas
-    const hasHalfStar = (totalStars - fullStars) >= 0.5;  // Media estrella si aplica
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);  // Estrellas vacías
-  
+    const fullStars = Math.floor(totalStars);
+    const hasHalfStar = (totalStars - fullStars) >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
     return {
-      full: new Array(fullStars).fill(0),  // Estrellas completas
-      half: hasHalfStar ? [0.5] : [],  // Media estrella si aplica
-      empty: new Array(emptyStars).fill(0),  // Estrellas vacías
+      full: new Array(fullStars).fill(0),
+      half: hasHalfStar ? [0.5] : [],
+      empty: new Array(emptyStars).fill(0),
     };
   }
-  
 
-  
-  getItemById(id: number) {
+  onSearch() {
+    const query = this.searchTerm.toLowerCase();
+    if (query) {
+      this.search(query);
+    }
+  }
+
+  search(query: string) {
     if (this.type === 'movie') {
-      return this.movies.find(movie => movie.id === id);
+      this.tmdbManager.searchMovies(query).subscribe(
+        (data: any) => {
+          this.filteredResults = data.results.filter(result => result.vote_average > 0 && result.title);
+        },
+        (error) => {
+          console.error('Error fetching movies:', error);
+        }
+      );
     } else if (this.type === 'game') {
-      return this.games.find(game => game.id === id);
-    } else {
-      return this.animes.find(anime => anime.mal_id === id);
+      this.rawgManager.searchGames(query).subscribe(
+        (data: any) => {
+          this.filteredResults = data.results.filter(result => result.rating > 0 && result.name);
+        },
+        (error) => {
+          console.error('Error fetching games:', error);
+        }
+      );
+    } else if (this.type === 'anime') {
+      this.jikanManager.searchAnimes(query).subscribe(
+        (data: any) => {
+          this.filteredResults = data.data.filter(result => result.score > 0 && result.title);
+        },
+        (error) => {
+          console.error('Error fetching animes:', error);
+        }
+      );
     }
   }
 

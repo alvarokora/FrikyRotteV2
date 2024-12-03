@@ -3,6 +3,7 @@ import { StorageService } from 'src/managers/StorageService';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CancelAlertService } from 'src/managers/CancelAlertService';
 import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
+import { FavoritesService } from 'src/managers/favoriteService';  // Importar el servicio de favoritos
 
 @Component({
   selector: 'app-home',
@@ -12,13 +13,15 @@ import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
 export class HomePage implements OnInit {
   user: any;
   email: string = "";
+  favorites: any[] = [];  // Array para almacenar los favoritos
 
   constructor(
     private router: Router,
     private storageService: StorageService,
     private cancelAlertService: CancelAlertService,
     private logoutUseCase: UserLogoutUseCase,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private favoritesService: FavoritesService  // Inyectar el servicio de favoritos
   ) {}
 
   ngOnInit() {
@@ -34,6 +37,17 @@ export class HomePage implements OnInit {
     if (!this.user) {
       console.log('No se encontraron datos del usuario.');
     }
+    // Obtener los favoritos desde el servicio
+    this.favorites = await this.favoritesService.getFavorites();
+  }
+
+  removeFromFavorites(itemId: any) {
+    this.favoritesService.removeFavorite(itemId);
+    this.loadFavorites(); // Recargar favoritos después de eliminar uno
+  }
+  
+  loadFavorites() {
+    this.favorites = this.favoritesService.getFavorites();  // Cargar nuevamente los favoritos
   }
 
   onIconButtonClick() {

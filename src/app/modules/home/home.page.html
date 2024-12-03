@@ -10,24 +10,47 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Contenido principal -->
+  <!-- Sección de Favoritos -->
+  <ion-card *ngIf="favorites.length > 0">
+    <ion-card-header>
+      <ion-card-title>Favoritos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let favorite of favorites">
+          <ion-label>{{ favorite.title || favorite.name }}</ion-label> <!-- Ajusta según la estructura de tus favoritos -->
+          <ion-button fill="clear" (click)="navigateToDetail(favorite.type)">
+            Ver detalles
+          </ion-button>
+          <ion-button fill="clear" (click)="removeFromFavorites(favorite.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="favorites.length === 0">
+    <ion-card-header>
+      <ion-card-title>No tienes favoritos aún</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+
+  <!-- Botones para redirigir a detalle de películas, juegos y animes (debajo) -->
+  <ion-segment value="movies-games" class="fixed-bottom">
+    <ion-segment-button value="movies" (click)="navigateToDetail('movie')">
+      <ion-icon name="film-outline"></ion-icon>
+      <ion-label>Películas</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="games" (click)="navigateToDetail('game')">
+      <ion-icon name="game-controller-outline"></ion-icon>
+      <ion-label>Juegos</ion-label>
+    </ion-segment-button>
+    
+    <ion-segment-button value="anime" (click)="navigateToDetail('anime')">
+      <ion-icon name="tv-outline"></ion-icon>
+      <ion-label>Animes</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 </ion-content>
-
-<ion-segment value="movies-games">
-  <!-- Botón para redirigir a detalle de películas -->
-  <ion-segment-button value="movies" (click)="navigateToDetail('movie')">
-    <ion-icon name="film-outline"></ion-icon>
-    <ion-label>Películas</ion-label>
-  </ion-segment-button>
-
-  <!-- Botón para redirigir a detalle de juegos -->
-  <ion-segment-button value="games" (click)="navigateToDetail('game')">
-    <ion-icon name="game-controller-outline"></ion-icon>
-    <ion-label>Juegos</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="anime" (click)="navigateToDetail('anime')">
-    <ion-icon name="tv-outline"></ion-icon>
-    <ion-label>Animes</ion-label>
-  </ion-segment-button>
-  
-</ion-segment>
