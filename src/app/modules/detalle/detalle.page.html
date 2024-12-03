@@ -12,7 +12,7 @@
 
   <!-- Mostrar los resultados filtrados -->
   <ion-list *ngIf="filteredResults.length > 0">
-    <ion-item *ngFor="let item of filteredResults" (click)="selectDetail(item.id, item)">
+    <ion-item *ngFor="let item of filteredResults" (click)="selectDetail(item.id, item, $event)">
       <ion-thumbnail slot="start">
         <img *ngIf="item.poster_path || item.background_image || item.images?.jpg?.image_url" 
              [src]="item.poster_path ? 'https://image.tmdb.org/t/p/w500/' + item.poster_path :
@@ -27,9 +27,6 @@
           <ion-icon *ngFor="let star of getStars(item.vote_average || item.rating).empty" name="star-outline" color="gold"></ion-icon>
         </div>
       </ion-label>
-      <ion-button slot="end" fill="clear" (click)="addToFavorites(item)">
-        <ion-icon name="heart-outline"></ion-icon>
-      </ion-button>
     </ion-item>
   </ion-list>
 
@@ -40,7 +37,7 @@
 
   <!-- Lista de películas populares -->
   <ion-list *ngIf="type === 'movie' && filteredResults.length === 0">
-    <ion-item *ngFor="let movie of movies" (click)="selectDetail(movie.id, movie)">
+    <ion-item *ngFor="let movie of movies" (click)="selectDetail(movie.id, movie, $event)">
       <ion-thumbnail slot="start">
         <img [src]="'https://image.tmdb.org/t/p/w92/' + movie.poster_path" />
       </ion-thumbnail>
@@ -53,7 +50,7 @@
           <ion-icon *ngFor="let star of getStars(movie.vote_average).empty" name="star-outline" color="gold"></ion-icon>
         </div>
       </ion-label>
-      <ion-button slot="end" fill="clear" (click)="addToFavorites(movie)">
+      <ion-button slot="end" fill="clear" (click)="addToFavorites(movie, $event)">
         <ion-icon name="heart-outline"></ion-icon>
       </ion-button>
     </ion-item>
@@ -61,7 +58,7 @@
 
   <!-- Lista de juegos populares -->
   <ion-list *ngIf="type === 'game' && filteredResults.length === 0">
-    <ion-item *ngFor="let game of games" (click)="selectDetail(game.id, game)">
+    <ion-item *ngFor="let game of games" (click)="selectDetail(game.id, game, $event)">
       <ion-thumbnail slot="start">
         <img [src]="game.background_image" />
       </ion-thumbnail>
@@ -74,7 +71,7 @@
           <ion-icon *ngFor="let star of getStars(game.rating).empty" name="star-outline" color="gold"></ion-icon>
         </div>
       </ion-label>
-      <ion-button slot="end" fill="clear" (click)="addToFavorites(game)">
+      <ion-button slot="end" fill="clear" (click)="addToFavorites(game, $event)">
         <ion-icon name="heart-outline"></ion-icon>
       </ion-button>
     </ion-item>
@@ -82,7 +79,7 @@
 
   <!-- Lista de animes populares -->
   <ion-list *ngIf="type === 'anime' && filteredResults.length === 0">
-    <ion-item *ngFor="let anime of animes" (click)="selectDetail(anime.mal_id, anime)">
+    <ion-item *ngFor="let anime of animes" (click)="selectDetail(anime.mal_id, anime, $event)">
       <ion-thumbnail slot="start">
         <img [src]="anime.images.jpg.image_url" />
       </ion-thumbnail>
@@ -97,7 +94,7 @@
           </ng-container>
         </div>
       </ion-label>
-      <ion-button slot="end" fill="clear" (click)="addToFavorites(anime)">
+      <ion-button slot="end" fill="clear" (click)="addToFavorites(anime, $event)">
         <ion-icon name="heart-outline"></ion-icon>
       </ion-button>
     </ion-item>
