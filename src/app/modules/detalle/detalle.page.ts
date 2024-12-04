@@ -37,13 +37,28 @@ export class DetallePage implements OnInit {
     private favoritesService: FavoritesService,
     private toastController: ToastController
   ) {}
+  
+
+
+  async loadFavorites() {
+    try {
+      const favorites = await this.favoritesService.getFavorites();
+      console.log('Favorites loaded:', favorites);
+      // Puedes asignar los favoritos a una propiedad si es necesario
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
+  }
+
 
   async addToFavorites(item: any, event: Event) {
     event.stopPropagation(); // Evita la propagación del evento de clic
     try {
       const existingFavorite = await this.favoritesService.getFavorites();
-      const isAlreadyFavorite = existingFavorite.some(fav => fav.id === item.id && fav.type === item.type);
-      
+      const isAlreadyFavorite = existingFavorite.some(
+        fav => fav.id === item.id && fav.type === this.type
+      );
+
       if (isAlreadyFavorite) {
         const toast = await this.toastController.create({
           message: 'Este favorito ya está agregado.',
@@ -51,10 +66,13 @@ export class DetallePage implements OnInit {
           color: 'warning',
         });
         await toast.present();
-        return; // Si ya está agregado, no hacer nada
+        return;
       }
-      
-      await this.favoritesService.addFavorite(item);
+
+      const favoriteItem = { ...item, type: this.type }; // Se asegura de agregar el tipo
+      await this.favoritesService.addFavorite(favoriteItem);
+      await this.loadFavorites();  // Aquí se recargan los favoritos
+
       const toast = await this.toastController.create({
         message: 'Añadido a favoritos',
         duration: 2000,
@@ -71,10 +89,10 @@ export class DetallePage implements OnInit {
     }
   }
 
-  isFavorite(item: any): boolean {
-    const favorites = this.favoritesService.getFavorites();
-    return favorites.some(fav => fav.id === item.id && fav.type === item.type);
-  }
+ async isFavorite(item: any): Promise<boolean> {
+  const favorites = await this.favoritesService.getFavorites();
+  return favorites.some(fav => fav.id === item.id && fav.type === item.type);
+}
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -252,7 +270,7 @@ export class DetallePage implements OnInit {
     } else if (this.type === 'anime') {
       this.jikanManager.searchAnimes(query).subscribe(
         (data: any) => {
-          this.filteredResults = data.data.filter(result => result.score > 0 && result.title);
+          this.filteredResults = data.data; // Ya filtrados y ordenados en el servicio
         },
         (error) => {
           console.error('Error fetching animes:', error);

@@ -56,12 +56,27 @@ ion-icon {
   font-size: 40px; /* Tamaño de los iconos */
   color: #ffffff; /* Color de los iconos */
 }
-.fixed-bottom {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
+
 
 .content {
   padding-bottom: 56px; /* Ajusta esto según el tamaño del toolbar o botones */
+}
+
+.favorites-container {
+  padding-bottom: 80px; /* Deja espacio para los botones */
+  height: calc(100vh - 80px); /* Hace que el contenedor ocupe todo el alto de la pantalla menos el espacio de los botones */
+  overflow-y: auto; /* Permite el desplazamiento dentro del contenedor */
+}
+
+.fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000; /* Asegura que los botones se mantengan sobre el contenido */
+}
+
+/* Asegura que el contenido no quede atrás de los botones */
+ion-content {
+  padding-bottom: 60px; /* Deja espacio para los botones */
+  padding-top: 70px; /* Deja un espacio suficiente desde la parte superior si es necesario */
 }
