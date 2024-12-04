@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export interface FavoriteItem {
-  id: any; // Puedes cambiar `any` por un tipo específico (ej. `number | string`)
+  id: number; // Puedes cambiar `any` por un tipo específico (ej. `number | string`)
   type: string; // Ejemplo: 'anime', 'manga', etc.
   [key: string]: any; // Permite atributos adicionales
 }

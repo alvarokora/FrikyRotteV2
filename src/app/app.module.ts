@@ -12,9 +12,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { SessionGuard } from './session.guard';
+import { DetallesModalComponent } from '../app/detalles-modal/detalles-modal.component';  // Importar el componente del modal
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, DetallesModalComponent],  // Asegúrate de declarar el componente aquí
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

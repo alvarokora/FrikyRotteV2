@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Detalles</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="detalle">
+    <!-- Concatenando la URL base correctamente -->
+    <img [src]="getImageUrl(detalle)" alt="Imagen de {{ detalle.title }}" />
+    <ion-card-header>
+      <ion-card-title>{{ detalle.title }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ detalle.synopsis || detalle.overview }}</p>
+      <p><strong>Valoración:</strong> {{ detalle.rating || detalle.vote_average }} / 10</p>
+      <p><strong>Fecha de emisión:</strong> {{ detalle.release_date || detalle.first_air_date }}</p>
+      <p><strong>Géneros:</strong> {{ detalle.genres?.join(', ') }}</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

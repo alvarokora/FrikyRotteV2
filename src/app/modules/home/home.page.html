@@ -19,7 +19,7 @@
         <ion-list>
           <ion-item *ngFor="let favorite of favorites">
             <ion-label>{{ favorite.title || favorite.name }}</ion-label>
-            <ion-button fill="clear" (click)="navigateToDetail(favorite.type)">
+            <ion-button fill="clear" (click)="showDetails(favorite)">
               Ver detalles
             </ion-button>
             <ion-button fill="clear" (click)="removeFromFavorites(favorite.id)">
