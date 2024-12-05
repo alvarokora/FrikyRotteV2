@@ -9,16 +9,27 @@
 
 <ion-content>
   <ion-card *ngIf="detalle">
-    <!-- Concatenando la URL base correctamente -->
     <img [src]="getImageUrl(detalle)" alt="Imagen de {{ detalle.title }}" />
     <ion-card-header>
       <ion-card-title>{{ detalle.title }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>{{ detalle.synopsis || detalle.overview }}</p>
-      <p><strong>Valoración:</strong> {{ detalle.rating || detalle.vote_average }} / 10</p>
-      <p><strong>Fecha de emisión:</strong> {{ detalle.release_date || detalle.first_air_date }}</p>
-      <p><strong>Géneros:</strong> {{ detalle.genres?.join(', ') }}</p>
+      <!-- Información para juegos -->
+      <p *ngIf="tipo === 'game'"><strong>Valoración:</strong> {{ detalle.vote_average * 2 }} / 10</p>
+      <p *ngIf="tipo === 'game'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
+      <p *ngIf="tipo === 'game'"><strong>Descripción:</strong> {{ detalle.description }}</p>
+      <p *ngIf="tipo === 'game'"><strong>Fecha de lanzamiento:</strong> {{ detalle.release_date }}</p>
+
+      <!-- Información para películas -->
+      <p *ngIf="tipo === 'movie'"><strong>Valoración:</strong> {{ detalle.vote_average }} / 10</p>
+      <p *ngIf="tipo === 'movie'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
+      <p *ngIf="tipo === 'movie'"><strong>Sinopsis:</strong> {{ detalle.overview }}</p>
+      <p *ngIf="tipo === 'movie'"><strong>Fecha de lanzamiento:</strong> {{ detalle.release_date }}</p>
+      
+      <!-- Información para animes -->
+      <p *ngIf="tipo === 'anime'"><strong>Sinopsis:</strong> {{ detalle.synopsis }}</p>
+      <p *ngIf="tipo === 'anime'"><strong>Fecha de emisión:</strong> {{ detalle.first_air_date }}</p>
+      <p *ngIf="tipo === 'anime'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
     </ion-card-content>
   </ion-card>
 </ion-content>

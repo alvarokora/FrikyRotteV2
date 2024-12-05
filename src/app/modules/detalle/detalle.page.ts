@@ -12,6 +12,8 @@ import { UserCrudService } from 'src/managers/user-crud-service';
 import { StorageService } from 'src/managers/StorageService';
 import { UserGamesUseCase } from 'src/app/use-cases/user-games.use-case';
 import { UserAnimeUseCase } from 'src/app/use-cases/user-anime.use-case';
+import { ModalController } from '@ionic/angular';
+import { DetallesModalComponent } from '../../detalles-modal/detalles-modal.component';  // Importar el componente del modal
 
 @Component({
   selector: 'app-detalle',
@@ -46,7 +48,8 @@ export class DetallePage implements OnInit {
     private userCrudService: UserCrudService,
     private storageService: StorageService,
     private userGamesUseCase: UserGamesUseCase,
-    private userAnimeUseCase: UserAnimeUseCase
+    private userAnimeUseCase: UserAnimeUseCase,
+    private modalController: ModalController,
   ) {}
   
 
@@ -70,17 +73,16 @@ export class DetallePage implements OnInit {
   }
 
   // Dentro de tu clase DetallePage
-async showDetails(item: any) {
-  const modal = await this.modalController.create({
-    component: DetallesModalComponent,
-    componentProps: {
-      id: item.id,  // Asumiendo que 'item' tiene un 'id' que necesitas
-      tipo: this.type,
-    },
-  });
-  return await modal.present();
-}
-
+  async showDetails(item: any) {
+    const modal = await this.modalController.create({
+      component: DetallesModalComponent,
+      componentProps: {
+        id: item.id,  // Asumiendo que 'item' tiene un 'id' que necesitas
+        tipo: this.type,
+      },
+    });
+    return await modal.present();
+  }
 
   async loadFavorites() {
     try {

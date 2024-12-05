@@ -103,5 +103,6 @@ ion-content {
 }
 
 ion-toolbar {
-  background: transparent; /* Fondo transparente */
+  background-color: rgba(0, 0, 0, 0.8); /* Negro con opacidad de 0.8 */
+  color: white; /* Texto blanco para que sea visible sobre el fondo oscuro */
 }

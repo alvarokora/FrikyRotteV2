@@ -12,17 +12,15 @@ export class JikanManager {
   constructor(private http: HttpClient) {}
 
   getPopularAnimes(page: number = 1): Observable<any> {
-    const url = `${this.BASE_URL}/anime?page=${page}`;
+    const url = `${this.BASE_URL}/anime?order_by=popularity&page=${page}`;
     return this.http.get<any>(url).pipe(
       map((response: any) => {
-        // Ordenar los animes por popularidad de mayor a menor
+        // Eliminar el filtro por mal_id
         const sortedAnimes = response.data.sort((a: any, b: any) => b.popularity - a.popularity);
         return { ...response, data: sortedAnimes };
       })
     );
   }
-  
-  
   
   searchAnimes(query: string): Observable<any> {
     return this.getPopularAnimes().pipe(
