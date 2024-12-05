@@ -11,6 +11,30 @@
 <ion-content [fullscreen]="true">
   <div class="content-container">
     <p>Bienvenido, {{ email }}</p>
+
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button fill="clear" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <!-- Mostrar la imagen del perfil -->
+    <div class="profile-image-container">
+      <img [src]="imageUrl || 'assets/default-avatar.png'" alt="Foto de perfil" class="profile-image">
+    </div>
+
+    <!-- Botones para tomar o elegir una foto -->
+    <ion-button expand="full" (click)="takeProfilePhoto()">Tomar foto</ion-button>
+    <ion-button expand="full" (click)="chooseProfilePhoto()">Elegir de la galería</ion-button>
+
+    <!-- Información del usuario -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ email }}</ion-card-title>
+      </ion-card-header>
+    </ion-card>
     
     <!-- Botón de Cierre de Sesión -->
     <ion-button expand="full" color="danger" (click)="onLogoutButtonPressed()">

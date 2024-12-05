@@ -4,6 +4,7 @@ import { CancelAlertService } from 'src/managers/CancelAlertService';
 import { NavController} from '@ionic/angular';
 import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
 import { Router } from '@angular/router';
+import { ImageService } from 'src/managers/image-service';
 
 @Component({
   selector: 'app-usuario',
@@ -13,17 +14,20 @@ import { Router } from '@angular/router';
 export class UsuarioPage implements OnInit {
 
   email: string = ''; // Aquí almacenamos el correo recibido
+  imageUrl: string = '';
 
   constructor(private storageService: StorageService,
     private router: Router,
     private alert: CancelAlertService,
     private navCtrl: NavController,
-    private userLogoutUseCase: UserLogoutUseCase) { }
+    private userLogoutUseCase: UserLogoutUseCase,
+    private imageService: ImageService) { }
 
   async ngOnInit() {
     const user = await this.storageService.get('user');
     if (user) {
       this.email = user.email && user.email.trim() !== '' ? user.email : 'Correo no disponible';
+      this.imageUrl = user.photoURL || '';
     }
   }
 
@@ -52,4 +56,23 @@ export class UsuarioPage implements OnInit {
       );
     }
   }
+
+  async takeProfilePhoto(){
+    const result = await this.imageService.getImageFromCamera();
+    if(result.success){
+      this.imageUrl = result.imageUrl;
+    }else {
+      console.error(result.message);
+    }
+  }
+
+  async chooseProfilePhoto(){
+    const result = await this.imageService.getImageFromGallery();
+    if (result.success){
+      this.imageUrl = result.imageUrl;
+    }else{
+      console.error(result.message);
+    }
+  }
+
 }
