@@ -13,8 +13,15 @@ export class JikanManager {
 
   getPopularAnimes(page: number = 1): Observable<any> {
     const url = `${this.BASE_URL}/anime?page=${page}`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(url).pipe(
+      map((response: any) => {
+        // Ordenar los animes por popularidad de mayor a menor
+        const sortedAnimes = response.data.sort((a: any, b: any) => b.popularity - a.popularity);
+        return { ...response, data: sortedAnimes };
+      })
+    );
   }
+  
   
   
   searchAnimes(query: string): Observable<any> {

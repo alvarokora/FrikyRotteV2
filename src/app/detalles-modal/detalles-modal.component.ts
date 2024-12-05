@@ -21,9 +21,15 @@ export class DetallesModalComponent implements OnInit {
     if (this.id && this.tipo) {
       this.detallesService.getDetalle(this.id, this.tipo).subscribe((data) => {
         this.detalle = data;
+  
+        // Multiplicar la valoración por 2 si es un juego
+        if (this.tipo === 'game' && this.detalle.vote_average) {
+          this.detalle.vote_average = this.detalle.vote_average * 2;
+        }
       });
     }
   }
+  
     // Método para construir la URL de la imagen
     getImageUrl(detalle: any): string {
       if (detalle.poster_path) {

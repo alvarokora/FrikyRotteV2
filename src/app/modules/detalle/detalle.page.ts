@@ -10,6 +10,10 @@ import { ToastController } from '@ionic/angular';
 import { UserMoviesUseCase } from 'src/app/use-cases/user-movies.use-case';
 import { UserCrudService } from 'src/managers/user-crud-service';
 import { StorageService } from 'src/managers/StorageService';
+import { ModalController } from '@ionic/angular';
+import { DetallesModalComponent } from '../../detalles-modal/detalles-modal.component';  // Importar el componente del modal
+
+
 
 @Component({
   selector: 'app-detalle',
@@ -17,6 +21,7 @@ import { StorageService } from 'src/managers/StorageService';
   styleUrls: ['./detalle.page.scss'],
 })
 export class DetallePage implements OnInit {
+  id: number;  // Declaramos la propiedad 'id'
   movieDetail: MovieDetail | any = null;
   movies: any[] = [];
   games: any[] = [];
@@ -41,12 +46,20 @@ export class DetallePage implements OnInit {
     private toastController: ToastController,
     private userMoviesUseCase: UserMoviesUseCase,
     private userCrudService: UserCrudService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private modalController: ModalController,
   ) {}
   
+
+   
+  
+
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params) => {
       this.type = params['type'];
+      this.id = params['id'];  // Aquí obtienes el ID desde los queryParams
+  
+      // Llamamos al método correspondiente dependiendo del tipo
       if (this.type === 'movie') {
         this.getPopularMovies();
       } else if (this.type === 'game') {
@@ -56,6 +69,19 @@ export class DetallePage implements OnInit {
       }
     });
   }
+
+  // Dentro de tu clase DetallePage
+async showDetails(item: any) {
+  const modal = await this.modalController.create({
+    component: DetallesModalComponent,
+    componentProps: {
+      id: item.id,  // Asumiendo que 'item' tiene un 'id' que necesitas
+      tipo: this.type,
+    },
+  });
+  return await modal.present();
+}
+
 
   async loadFavorites() {
     try {
@@ -224,12 +250,12 @@ export class DetallePage implements OnInit {
     );
   }
 
-  selectDetail(id: number, item: any, event: Event) {
-    event.stopPropagation(); // Evita la propagación del evento de clic
-    const routeType = this.type === 'movie' ? 'movie' : this.type === 'game' ? 'game' : 'anime';
-    this.router.navigate(['/detalle'], { queryParams: { id, type: routeType } });
-    this.addToFavorites(item, event); // Agregar a favoritos
-  }
+selectDetail(id: number, item: any, event: Event) {
+  event.stopPropagation(); // Detiene la propagación del evento de clic
+  const routeType = this.type === 'movie' ? 'movie' : this.type === 'game' ? 'game' : 'anime';
+  this.router.navigate(['/detalle'], { queryParams: { id, type: routeType } });
+  // No se debe llamar a `addToFavorites` aquí
+}
 
   getStars(voteAverage: number): { full: number[], half: number[], empty: number[] } {
     let totalStars = 0;

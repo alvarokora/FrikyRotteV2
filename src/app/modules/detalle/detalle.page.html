@@ -26,6 +26,10 @@
           <ion-icon *ngFor="let star of getStars(item.vote_average || item.rating).half" name="star-half" color="gold"></ion-icon>
           <ion-icon *ngFor="let star of getStars(item.vote_average || item.rating).empty" name="star-outline" color="gold"></ion-icon>
         </div>
+        <!-- Botón para abrir detalles -->
+        <ion-button fill="clear" (click)="showDetails(item)" color="primary">
+          Ver detalles
+        </ion-button>
       </ion-label>
     </ion-item>
   </ion-list>
@@ -49,6 +53,10 @@
           <ion-icon *ngFor="let star of getStars(movie.vote_average).half" name="star-half" color="gold"></ion-icon>
           <ion-icon *ngFor="let star of getStars(movie.vote_average).empty" name="star-outline" color="gold"></ion-icon>
         </div>
+        <!-- Botón para abrir detalles -->
+        <ion-button fill="clear" (click)="showDetails(movie)" color="primary">
+          Ver detalles
+        </ion-button>
       </ion-label>
       <ion-button slot="end" fill="clear" (click)="addToFavorites(movie, $event)">
         <ion-icon name="heart-outline"></ion-icon>
@@ -70,6 +78,10 @@
           <ion-icon *ngFor="let star of getStars(game.rating).half" name="star-half" color="gold"></ion-icon>
           <ion-icon *ngFor="let star of getStars(game.rating).empty" name="star-outline" color="gold"></ion-icon>
         </div>
+        <!-- Botón para abrir detalles -->
+        <ion-button fill="clear" (click)="showDetails(game)" color="primary">
+          Ver detalles
+        </ion-button>
       </ion-label>
       <ion-button slot="end" fill="clear" (click)="addToFavorites(game, $event)">
         <ion-icon name="heart-outline"></ion-icon>
@@ -92,7 +104,11 @@
             <ion-icon *ngFor="let star of getStars(anime.score).half" name="star-half" color="gold"></ion-icon>
             <ion-icon *ngFor="let star of getStars(anime.score).empty" name="star-outline" color="gold"></ion-icon>
           </ng-container>
-        </div>
+        </div>  
+        <!-- Botón para abrir detalles -->
+        <ion-button fill="clear" (click)="showDetails(anime)" color="primary">
+          Ver detalles
+        </ion-button>
       </ion-label>
       <ion-button slot="end" fill="clear" (click)="addToFavorites(anime, $event)">
         <ion-icon name="heart-outline"></ion-icon>
