@@ -10,10 +10,8 @@ import { ToastController } from '@ionic/angular';
 import { UserMoviesUseCase } from 'src/app/use-cases/user-movies.use-case';
 import { UserCrudService } from 'src/managers/user-crud-service';
 import { StorageService } from 'src/managers/StorageService';
-import { ModalController } from '@ionic/angular';
-import { DetallesModalComponent } from '../../detalles-modal/detalles-modal.component';  // Importar el componente del modal
-
-
+import { UserGamesUseCase } from 'src/app/use-cases/user-games.use-case';
+import { UserAnimeUseCase } from 'src/app/use-cases/user-anime.use-case';
 
 @Component({
   selector: 'app-detalle',
@@ -47,7 +45,8 @@ export class DetallePage implements OnInit {
     private userMoviesUseCase: UserMoviesUseCase,
     private userCrudService: UserCrudService,
     private storageService: StorageService,
-    private modalController: ModalController,
+    private userGamesUseCase: UserGamesUseCase,
+    private userAnimeUseCase: UserAnimeUseCase
   ) {}
   
 
@@ -130,6 +129,10 @@ async showDetails(item: any) {
       const uid = user.uid;
       if (this.type === 'movie'){
         await this.userMoviesUseCase.performAddMovie(item.id,uid);
+      } else if (this.type === 'game'){
+        await this.userGamesUseCase.performAddGame(item.id,uid);
+      } else if (this.type === 'anime'){
+        await this.userAnimeUseCase.performAddAnime(item.mal_id,uid);
       }
       await toast.present();
     } catch (error) {
