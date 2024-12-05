@@ -20,6 +20,10 @@ export class GameCrudService {
         return this.db.list(this.basePath).valueChanges()
     }
 
+    getItem(id: string): Observable<any> {
+        return this.db.object(`${this.basePath}/${id}`).valueChanges();
+    }
+
     deleteItem(id: string): Promise<void>{
         return this.db.object(`${this.basePath}/${id}`).remove();
     }

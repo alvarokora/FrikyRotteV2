@@ -7,6 +7,9 @@ import { FavoritesService } from 'src/managers/favoriteService';  // Importar el
 import { ModalController } from '@ionic/angular';  // Importar ModalController
 import { DetallesModalComponent } from '../../detalles-modal/detalles-modal.component';  // Importar el componente del modal
 import { UserMoviesUseCase } from 'src/app/use-cases/user-movies.use-case';
+import { UserGamesUseCase } from 'src/app/use-cases/user-games.use-case';
+import { UserAnimeUseCase } from 'src/app/use-cases/user-anime.use-case';
+import { GameCrudService } from 'src/managers/game-crud-service';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +29,9 @@ export class HomePage implements OnInit {
     private logoutUseCase: UserLogoutUseCase,
     private route: ActivatedRoute,
     private userMoviesUseCase: UserMoviesUseCase,
+    private userGamesUseCase: UserGamesUseCase,
+    private userAnimeUseCase: UserAnimeUseCase,
+    private gameCrudService: GameCrudService,
     private favoritesService: FavoritesService  // Inyectar el servicio de favoritos
   ) {}
 
@@ -46,14 +52,24 @@ export class HomePage implements OnInit {
     this.favorites = await this.favoritesService.getFavorites();
   }
 
-  removeFromFavorites(itemId: any) {
+  removeFromFavorites(itemId: any, favorite: any) {
     this.favoritesService.removeFavorite(itemId);
-    this.userMoviesUseCase.performDeleteMovie(itemId,this.user.uid);
-    this.loadFavorites(); // Recargar favoritos después de eliminar uno
+    if (favorite.type === 'movie'){
+      this.userMoviesUseCase.performDeleteMovie(itemId,this.user.uid);
+    } else if (favorite.type === 'game'){
+      this.userGamesUseCase.performDeleteGame(itemId,this.user.uid);
+    } else if (favorite.type === 'anime'){
+      this.userAnimeUseCase.performDeleteAnime(itemId,this.user.uid);
+    }
+    this.loadFavorites(itemId); // Recargar favoritos después de eliminar uno
   }
 
-  loadFavorites() {
+  loadFavorites(itemId: any) {
     this.favorites = this.favoritesService.getFavorites();  // Cargar nuevamente los favoritos
+   /* this.gameCrudService.getItem(this.user.uid+itemId).subscribe(data => {
+      this.favorites = data;
+    });
+    console.log(this.favorites);*/
   }
 
   onIconButtonClick() {
