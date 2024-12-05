@@ -7,6 +7,9 @@ import { JikanManager } from '../../../managers/jikanManager';
 import { NavController } from '@ionic/angular';
 import { FavoritesService } from '../../../managers/favoriteService';
 import { ToastController } from '@ionic/angular';
+import { UserMoviesUseCase } from 'src/app/use-cases/user-movies.use-case';
+import { UserCrudService } from 'src/managers/user-crud-service';
+import { StorageService } from 'src/managers/StorageService';
 
 @Component({
   selector: 'app-detalle',
@@ -35,10 +38,24 @@ export class DetallePage implements OnInit {
     private jikanManager: JikanManager,
     private router: Router,
     private favoritesService: FavoritesService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private userMoviesUseCase: UserMoviesUseCase,
+    private userCrudService: UserCrudService,
+    private storageService: StorageService
   ) {}
   
-
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.type = params['type'];
+      if (this.type === 'movie') {
+        this.getPopularMovies();
+      } else if (this.type === 'game') {
+        this.getPopularGames();
+      } else if (this.type === 'anime') {
+        this.getPopularAnimes();
+      }
+    });
+  }
 
   async loadFavorites() {
     try {
@@ -55,8 +72,13 @@ export class DetallePage implements OnInit {
     event.stopPropagation(); // Evita la propagación del evento de clic
     try {
       const existingFavorite = await this.favoritesService.getFavorites();
+      const itemId = item.mal_id || item.id;
+      if (!itemId){
+        console.error('No tiene un ID valido: ',item);
+        return;
+      }
       const isAlreadyFavorite = existingFavorite.some(
-        fav => fav.id === item.id && fav.type === this.type
+        fav => fav.id === itemId && fav.type === this.type
       );
 
       if (isAlreadyFavorite) {
@@ -78,6 +100,11 @@ export class DetallePage implements OnInit {
         duration: 2000,
         color: 'success',
       });
+      const user = await this.storageService.get('user');
+      const uid = user.uid;
+      if (this.type === 'movie'){
+        await this.userMoviesUseCase.performAddMovie(item.id,uid);
+      }
       await toast.present();
     } catch (error) {
       const toast = await this.toastController.create({
@@ -93,19 +120,6 @@ export class DetallePage implements OnInit {
   const favorites = await this.favoritesService.getFavorites();
   return favorites.some(fav => fav.id === item.id && fav.type === item.type);
 }
-
-  ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      this.type = params['type'];
-      if (this.type === 'movie') {
-        this.getPopularMovies();
-      } else if (this.type === 'game') {
-        this.getPopularGames();
-      } else if (this.type === 'anime') {
-        this.getPopularAnimes();
-      }
-    });
-  }
 
   loadMoreData(event: any) {
     if (this.type === 'movie') {

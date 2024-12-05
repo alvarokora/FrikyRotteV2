@@ -6,6 +6,7 @@ import { UserLogoutUseCase } from 'src/app/use-cases/user-logout.user-case';
 import { FavoritesService } from 'src/managers/favoriteService';  // Importar el servicio de favoritos
 import { ModalController } from '@ionic/angular';  // Importar ModalController
 import { DetallesModalComponent } from '../../detalles-modal/detalles-modal.component';  // Importar el componente del modal
+import { UserMoviesUseCase } from 'src/app/use-cases/user-movies.use-case';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,7 @@ export class HomePage implements OnInit {
     private cancelAlertService: CancelAlertService,
     private logoutUseCase: UserLogoutUseCase,
     private route: ActivatedRoute,
+    private userMoviesUseCase: UserMoviesUseCase,
     private favoritesService: FavoritesService  // Inyectar el servicio de favoritos
   ) {}
 
@@ -46,6 +48,7 @@ export class HomePage implements OnInit {
 
   removeFromFavorites(itemId: any) {
     this.favoritesService.removeFavorite(itemId);
+    this.userMoviesUseCase.performDeleteMovie(itemId,this.user.uid);
     this.loadFavorites(); // Recargar favoritos después de eliminar uno
   }
 

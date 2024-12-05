@@ -1,3 +1,25 @@
+.home-content {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border: 4px solid white; /* Borde blanco alrededor del contenido */
+  box-sizing: border-box; /* Asegura que el borde no afecte el tamaño total */
+}
+
+.divMayor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/bg.png'); /* Imagen de fondo */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+}
+
 #container {
   text-align: center;
   position: relative; /* Necesario para posicionar el icono en relación con este contenedor */
@@ -12,7 +34,6 @@
   align-items: center;
 }
 
-
 #icon-button {
 
   top: 10px; /* Ajusta según sea necesario */
@@ -22,7 +43,7 @@
 }
 
 ion-icon {
-  font-size: 50px;
+  font-size: 40px;
   color: #ffffff;
 }
 
@@ -79,4 +100,8 @@ ion-icon {
 ion-content {
   padding-bottom: 60px; /* Deja espacio para los botones */
   padding-top: 70px; /* Deja un espacio suficiente desde la parte superior si es necesario */
+}
+
+ion-toolbar {
+  background: transparent; /* Fondo transparente */
 }

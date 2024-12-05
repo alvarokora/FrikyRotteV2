@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
 })
 
 export class GameCrudService {
-    private basePath = '/users/games'
+    private basePath = '/games'
 
     constructor(private db: AngularFireDatabase){}
 
