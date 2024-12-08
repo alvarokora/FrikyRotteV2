@@ -50,4 +50,44 @@ export class UserAnimeUseCase {
         }
     }
 
+    async performAddComment(id: number, uid: string, comment: string): Promise<{success: boolean; message: string}>{
+        try{
+            const AnimeData = {
+                uid: uid,
+                id: id,
+                comment: comment
+            };
+            console.log('Datos: ',AnimeData);
+            await this.db.object(`/anime/${uid+id}`).update(AnimeData);
+            return { success: true, message: "Anime actualizado con exito"};
+        } catch (error: any){
+            let errorMessage = "Ocurrio un error al actualizar el anime de Firebase";
+            console.error("Error al actualizar el anime en FireBase");
+            return { success: false, message: errorMessage};
+        }
+    }
+
+    async performGetComment(id: number, uid: string): Promise<{ success: boolean; comment: string | null; message: string }> {
+        try {
+            // Acceder a la ruta correcta en la base de datos para obtener el comentario
+            const commentSnapshot = await this.db.object(`/anime/${uid + id}`).query.once('value');
+
+            // Imprimir los datos obtenidos para verificar su estructura
+            console.log('Datos obtenidos:', commentSnapshot.val());
+
+            // Comprobamos si el comentario existe
+            const comment = commentSnapshot.val() && commentSnapshot.val().comment ? commentSnapshot.val().comment : null;
+
+            // Si el comentario existe, lo devolvemos
+            if (comment !== null) {
+                return { success: true, comment: comment, message: "Comentario obtenido con éxito" };
+            } else {
+                return { success: false, comment: null, message: "Comentario no encontrado" };
+            }
+        } catch (error: any) {
+            console.error("Error al obtener el comentario:", error);
+            return { success: false, comment: null, message: "Error al obtener el comentario" };
+        }
+    }
+
 }

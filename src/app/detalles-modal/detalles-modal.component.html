@@ -25,11 +25,21 @@
       <p *ngIf="tipo === 'movie'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
       <p *ngIf="tipo === 'movie'"><strong>Sinopsis:</strong> {{ detalle.overview }}</p>
       <p *ngIf="tipo === 'movie'"><strong>Fecha de lanzamiento:</strong> {{ detalle.release_date }}</p>
-      
+
       <!-- Información para animes -->
       <p *ngIf="tipo === 'anime'"><strong>Sinopsis:</strong> {{ detalle.synopsis }}</p>
       <p *ngIf="tipo === 'anime'"><strong>Fecha de emisión:</strong> {{ detalle.first_air_date }}</p>
       <p *ngIf="tipo === 'anime'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
     </ion-card-content>
   </ion-card>
+
+  <ion-item>
+    <ion-label position="floating"></ion-label>
+    <ion-textarea id="comentario" rows="5" placeholder="Escribe tu comentario aquí..."
+      [value]="comentario"></ion-textarea>
+  </ion-item>
+
+
+  <ion-button expand="full" (click)="agregarComentario()">Guardar Comentario</ion-button>
+
 </ion-content>
