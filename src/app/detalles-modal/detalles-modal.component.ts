@@ -6,6 +6,7 @@ import { StorageService } from 'src/managers/StorageService';
 import { UserGamesUseCase } from '../use-cases/user-games.use-case';
 import { UserMoviesUseCase } from '../use-cases/user-movies.use-case';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-detalles-modal',
@@ -14,9 +15,13 @@ import { AngularFireDatabase } from '@angular/fire/compat/database';
 export class DetallesModalComponent implements OnInit {
   @Input() id: number;  // ID del objeto
   @Input() tipo: 'anime' | 'movie' | 'game';  // Tipo de objeto
+  @Input() latitud: number; // Nueva propiedad para latitud
+  @Input() longitud: number; // Nueva propiedad para longitud
   detalle: any;  // Almacena los detalles del objeto
   user: any;
   comentario: string | null = null;
+  latitude: number | null = null;
+  longitude: number | null = null;
 
   constructor(
     private modalController: ModalController,
@@ -27,6 +32,15 @@ export class DetallesModalComponent implements OnInit {
     private userMoviesUseCase: UserMoviesUseCase,
     private db: AngularFireDatabase
   ) { }
+  async obtenerCoordenadas() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      this.latitude = coordinates.coords.latitude;
+      this.longitude = coordinates.coords.longitude;
+    } catch (error) {
+      console.error('Error al obtener las coordenadas:', error);
+    }
+  }
 
   ngOnInit() {
     if (this.id && this.tipo) {
@@ -35,7 +49,8 @@ export class DetallesModalComponent implements OnInit {
       // Si el tipo es "anime", usamos mal_id en lugar de id
       if (this.tipo === 'anime') {
         idToUse = this.detalle.mal_id; // Usamos mal_id, y si no está disponible, usamos el id original
-      }
+      } 
+       
 
       this.detallesService.getDetalle(idToUse, this.tipo).subscribe((data) => {
         this.detalle = data;
@@ -64,13 +79,13 @@ export class DetallesModalComponent implements OnInit {
           this.detalle.genres = this.detalle.genres?.map((genre: any) => genre.name).join(', ') || 'N/A';
           this.detalle.title = this.detalle.title || 'Título no disponible';
         }
-
+      
         this.obtenerComentario();
+        this.obtenerCoordenadas();
       });
     }
-  }
-
-
+  } 
+  
 
   // Método para obtener la descripción localizada (en inglés o español)
   getLocalizedDescription(detalle: any): string {
@@ -141,7 +156,9 @@ export class DetallesModalComponent implements OnInit {
       console.log('El comentario no puede estar vacío');
     }
   }
+  
 
+  
 
   async obtenerComentario() {
     if (this.detalle && this.detalle.id) {

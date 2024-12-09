@@ -3,6 +3,7 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFireDatabase } from "@angular/fire/compat/database";
 import { StorageService } from "src/managers/StorageService";
 import { UserCrudService } from "src/managers/user-crud-service";
+import { Geolocation } from '@capacitor/geolocation';
 
 @Injectable({
     providedIn: 'root',
@@ -20,10 +21,17 @@ export class UserMoviesUseCase {
         console.log('ID: ',id);
         console.log('uid: ',uid);
         
-        try{
+        try {
+            // Obtener ubicación actual
+            const coordinates = await Geolocation.getCurrentPosition();
+            const latitude = coordinates.coords.latitude;
+            const longitude = coordinates.coords.longitude;
+    
             const MovieData = {
                 uid: uid,
-                id: id
+                id: id,
+                latitude: latitude,
+                longitude: longitude
             };
 
             console.log('Datos: ',MovieData);
@@ -88,5 +96,49 @@ export class UserMoviesUseCase {
             return { success: false, comment: null, message: "Error al obtener el comentario" };
         }
     }
+
+    async performGetCoordinatesMovie(id: number, uid: string): Promise<{ success: boolean; coordinates: { latitude: number | null, longitude: number | null } | null; message: string }> {
+        try {
+            // Acceder a la ruta correcta en la base de datos para obtener las coordenadas
+            const coordinatesSnapshot = await this.db.object(`/coordinates/movie/${uid + id}`).query.once('value');
+            
+            // Verificar si hay datos
+            const coordinates = coordinatesSnapshot.val();
+            if (!coordinates) {
+                return { 
+                    success: false, 
+                    coordinates: null, 
+                    message: "Coordenadas no encontradas" 
+                };
+            }
+    
+            // Extraer latitud y longitud
+            const latitude = coordinates.latitude ?? null;
+            const longitude = coordinates.longitude ?? null;
+    
+            // Verificar si las coordenadas están presentes
+            if (latitude !== null && longitude !== null) {
+                return { 
+                    success: true, 
+                    coordinates: { latitude, longitude }, 
+                    message: "Coordenadas obtenidas con éxito" 
+                };
+            } else {
+                return { 
+                    success: false, 
+                    coordinates: null, 
+                    message: "Coordenadas incompletas" 
+                };
+            }
+        } catch (error: any) {
+            console.error("Error al obtener las coordenadas:", error);
+            return { 
+                success: false, 
+                coordinates: null, 
+                message: "Error al obtener las coordenadas" 
+            };
+        }
+    }
+    
 
 }

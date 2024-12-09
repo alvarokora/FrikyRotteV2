@@ -31,7 +31,13 @@
       <p *ngIf="tipo === 'anime'"><strong>Fecha de emisión:</strong> {{ detalle.first_air_date }}</p>
       <p *ngIf="tipo === 'anime'"><strong>Géneros:</strong> {{ detalle.genres }}</p>
     </ion-card-content>
+
   </ion-card>
+     <div *ngIf="latitud !== null && longitud !== null">
+      <p><strong>Latitud:</strong> {{ latitude }}</p>
+      <p><strong>Longitud:</strong> {{ longitude }}</p>
+    </div> 
+    
 
   <ion-item>
     <ion-label position="floating"></ion-label>

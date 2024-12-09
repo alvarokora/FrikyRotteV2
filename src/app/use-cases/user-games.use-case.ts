@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFireDatabase } from "@angular/fire/compat/database";
 import { StorageService } from "src/managers/StorageService";
+import { Geolocation } from '@capacitor/geolocation';
 
 @Injectable({
     providedIn: 'root',
@@ -17,11 +18,22 @@ export class UserGamesUseCase {
     async performAddGame(id: number, uid: string): Promise<{ success: boolean; message: string }> {
         console.log('ID: ', id);
         console.log('uid: ', uid);
-
+        
         try {
+            // Obtener la ubicación del usuario
+            const position = await Geolocation.getCurrentPosition();
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            console.log('Ubicación obtenida:', { latitude, longitude });
+
             const GameData = {
-                uid: uid,
-                id: id
+                uid,
+                id,
+                location: {
+                    latitude,
+                    longitude,
+                }
             };
 
             console.log('Datos: ', GameData);
@@ -86,5 +98,43 @@ export class UserGamesUseCase {
             return { success: false, comment: null, message: "Error al obtener el comentario" };
         }
     }
+    async performGetCoordinatesGame(id: number, uid: string): Promise<{ success: boolean; coordinates: { latitude: number | null, longitude: number | null } | null; message: string }> {
+        try {
+            // Acceder a la ruta correcta en la base de datos para obtener las coordenadas
+            const coordinatesSnapshot = await this.db.object(`/coordinates/game/${uid + id}`).query.once('value');
+      
+            // Imprimir los datos obtenidos para verificar su estructura
+            console.log('Datos obtenidos:', coordinatesSnapshot.val());
+      
+            // Comprobamos si las coordenadas existen
+            const coordinates = coordinatesSnapshot.val();
+            const latitude = coordinates ? coordinates.latitude : null;
+            const longitude = coordinates ? coordinates.longitude : null;
+      
+            // Si las coordenadas existen, las devolvemos
+            if (latitude !== null && longitude !== null) {
+                return { 
+                    success: true, 
+                    coordinates: { latitude, longitude }, 
+                    message: "Coordenadas obtenidas con éxito"
+                };
+            } else {    
+                return { 
+                    success: false, 
+                    coordinates: null, 
+                    message: "Coordenadas no encontradas"
+                };
+            }
+        } catch (error: any) {
+            console.error("Error al obtener las coordenadas:", error);
+            return { 
+                success: false, 
+                coordinates: null, 
+                message: "Error al obtener las coordenadas"
+            };
+        }
+    }
+    
+
 
 }

@@ -72,17 +72,19 @@ export class DetallePage implements OnInit {
     });
   }
 
-  // Dentro de tu clase DetallePage
   async showDetails(item: any) {
     const modal = await this.modalController.create({
       component: DetallesModalComponent,
       componentProps: {
-        id: item.id,  // Asumiendo que 'item' tiene un 'id' que necesitas
-        tipo: this.type,
+        id: item.id,           // Asume que 'item' tiene un 'id'
+        tipo: this.type,       // Tipo del objeto
+        latitud: item.latitud, // Asume que 'item' tiene 'latitud'
+        longitud: item.longitud // Asume que 'item' tiene 'longitud'
       },
     });
     return await modal.present();
   }
+  
 
   async loadFavorites() {
     try {
